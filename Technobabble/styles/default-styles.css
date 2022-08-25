@@ -1,3 +1,25 @@
+@font-face {
+    font-family: Orbitron;
+    src: url(../fonts/static/Orbitron-Black.ttf);
+}
+
+body, #my-button{
+    font-family: Orbitron;
+}
+
+
+#my-button {
+    background-color: #3a3a3a;
+    color: white;
+    transition-duration: 0.5s;
+}
+
+#my-button:hover{
+    background-color: white;
+    color: #3a3a3a;
+    
+}
+
 @media only screen and (min-width: 320px) {
     .container {
         display: flex;
@@ -31,7 +53,7 @@
         background-color: #23D160;
     }
 
-    #myButton{
+    #my-button{
         width: 300px;
         height: 75pt;
         font-size: 1.5rem;
@@ -51,6 +73,7 @@
 
     h1 {
         background-color: #FF3860;
+        
     }
 
     .container {
@@ -60,32 +83,33 @@
 
     #output {
         text-align: left;
+        
     }
 }
 
-body {
+@media only screen and (min-width: 1408px) {
+    h1{
+        font-size: 6rem;
+        background-color: #ae29c0;
+        
+    }
 
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 5vw;
+    #my-button{
+        width: 750px;
+        height: 100px;
+        font-size: 4rem;
+    }
+
+    body{
+        color: darkgray;
+        font-size: 5rem;
+    }
     
+    .container {
+        display: block;
+        margin: 1rem .5rem;
+    }
+
 }
 
-p {
-    margin: 2.5% 0%;
-}
 
-#myButton {
-    background-color: #3a3a3a;
-    color: white;
-    transition-duration: 0.5s;
-    width: 65vw;
-    height: 15vh;
-    font-size: 32px;
-    font-size: 5vw;
-}
-
-#myButton:hover{
-    background-color: white;
-    color: #3a3a3a;;
-    
-}
