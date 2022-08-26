@@ -3,18 +3,21 @@
     src: url(../fonts/static/Orbitron-Black.ttf);
 }
 
-body, #my-button{
+body, button{
     font-family: Orbitron;
 }
 
+#five-button{
+    display: none;
+}
 
-#my-button {
+button {
     background-color: #3a3a3a;
     color: white;
     transition-duration: 0.5s;
 }
 
-#my-button:hover{
+button:hover{
     background-color: white;
     color: #3a3a3a;
     
@@ -53,7 +56,7 @@ body, #my-button{
         background-color: #23D160;
     }
 
-    #my-button{
+    button{
         width: 300px;
         height: 75pt;
         font-size: 1.5rem;
@@ -94,19 +97,22 @@ body, #my-button{
         
     }
 
-    #my-button{
+    #five-button{
+        display: inline;
+    }
+
+    button{
         width: 750px;
         height: 100px;
-        font-size: 4rem;
+        font-size: 3.5rem;
     }
 
     body{
         color: darkgray;
-        font-size: 5rem;
+        font-size: 4rem;
     }
     
     .container {
-        display: block;
         margin: 1rem .5rem;
     }
 

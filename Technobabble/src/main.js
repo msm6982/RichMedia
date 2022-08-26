@@ -10,27 +10,32 @@
     //words1.splice(1,0); // doesnt work
     //words1.push("foo"); // does work
     
-    window.onload = Initial;
+    window.onload = initial;
 
     // Generate at start
-    function Initial() {
-        Babble();
+    function initial() {
+        babble(1);
 
-        //document.querySelector("#my-button").onclick = babble;
-        document.querySelector("#my-button").addEventListener('click', Babble);
+        document.querySelector("#my-button").onclick = function(){babble(1)};
+        document.querySelector("#five-button").addEventListener('click', function(){babble(5)});
     }
+    
+    // Generates Technobable from the three arrays, phrases represents an int value
+    function babble (phrases) {
 
-   
-
-    // Generates Technobable from the three arrays
-    function Babble () {
-
+        let bab = "";
         function randomPhrase (array) {
            return array[Math.floor(Math.random() * array.length)];
         }
-
-        const bab = `${randomPhrase(words1)} ${randomPhrase(words2)} ${randomPhrase(words3)}`;
         
+        
+        //const bab += `${randomPhrase(words1)} ${randomPhrase(words2)} ${randomPhrase(words3)}`;
+        for (let index = 0; index < phrases; index++) {
+            bab += randomPhrase(words1) + " " + randomPhrase(words2) + " " + randomPhrase(words3) + "<br>";           
+        }
+        
+        console.log(bab);
+
         // Update the text
         document.querySelector("#output").innerHTML = bab;
     }
