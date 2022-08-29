@@ -5,8 +5,10 @@
     <title>Greeter</title>
     <style>
       *{font-size:1.5em;}
-      button{color: red;}
-      #input-firstname{color: green;}
+      button{ color: #ff0000;
+              width: 100px;
+              height: 50px; } 
+      .name-field{color: green;}
       .is-bold{font-weight: bold;}
     </style>
     <script type="module" src="main.js"></script>
@@ -14,8 +16,8 @@
 <body>
   <button id="btn-hello">Hello!</button>
   <button id="btn-goodbye">Goodbye!</button>
-  <input id="input-firstname" placeholder="Type your first name">
-  <input id="input-lastname" placeholder="Type your last name">
+  <input class="name-field" id="input-firstname" placeholder="Type your first name">
+  <input class="name-field" id="input-lastname" placeholder="Type your last name">
   <p class="is-bold" id="output">???</p>
 </body>
 </html>

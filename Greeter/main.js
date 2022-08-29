@@ -1,12 +1,20 @@
 
+window.onload = initial;
+
+function initial() {
+    let pStyle = document.querySelector("p").style;
+    pStyle.color = "#ff0000;"
+    pStyle.backgroundColor = "#eeff00"
+
+    document.querySelector("#btn-hello").onclick = () => greet("Hello!");
+    document.querySelector("#btn-goodbye").onclick = function(){greet("Goodbye!")};
+}
 
 
-document.querySelector("#btn-hello").onclick = () => greet("Hello!");
-document.querySelector("#btn-goodbye").onclick = function(){greet("Goodbye!")};
 
 function greet(msg) {
     // 3A - get name of person from the <input>
-    let name =  document.querySelector("#input-firstname").value || "No Name";
+    let name =  (document.querySelector("#input-firstname").value || "No") + " " + (document.querySelector("#input-lastname").value || "Name");
     console.log(name);
 
     // 3B - get a reference to the #output <p>
@@ -24,7 +32,7 @@ function greet2(evt)
     if(evt.target.id == "btn-goodbye") msg = "CYA";
 
     // 3A - get name of person from the <input>
-    let name =  document.querySelector("#input-firstname").value || "No Name";
+    let name =  (document.querySelector("#input-firstname").value || "No") + " " + (document.querySelector("#input-lastname").value || "Name");
     console.log(name);
 
     // 3B - get a reference to the #output <p>
