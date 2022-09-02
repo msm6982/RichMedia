@@ -1,25 +1,64 @@
 "use strict";
+// Sources used : https://www.baeldung.com/java-remove-start-end-double-quote#:~:text=To%20remove%20double%20quotes%20just,be%20replaced%20by%20empty%20strings.
 	
-	const words1 = ["Acute", "Aft", "Anti-matter", "Bipolar", "Cargo", "Command", "Communication", "Computer", "Deuterium", "Dorsal", "Emergency", "Engineering", "Environmental", "Flight", "Fore", "Guidance", "Heat", "Impulse", "Increased", "Inertial", "Infinite", "Ionizing", "Isolinear", "Lateral", "Linear", "Matter", "Medical", "Navigational", "Optical", "Optimal", "Optional", "Personal", "Personnel", "Phased", "Reduced", "Science", "Ship's", "Shuttlecraft", "Structural", "Subspace", "Transporter", "Ventral"];
-	
-	const words2 = ["Propulsion", "Dissipation", "Sensor", "Improbability", "Buffer", "Graviton", "Replicator", "Matter", "Anti-matter", "Organic", "Power", "Silicon", "Holographic", "Transient", "Integrity", "Plasma", "Fusion", "Control", "Access", "Auto", "Destruct", "Isolinear", "Transwarp", "Energy", "Medical", "Environmental", "Coil", "Impulse", "Warp", "Phaser", "Operating", "Photon", "Deflector", "Integrity", "Control", "Bridge", "Dampening", "Display", "Beam", "Quantum", "Baseline", "Input"];
-	
-	const words3 = ["Chamber", "Interface", "Coil", "Polymer", "Biosphere", "Platform", "Thruster", "Deflector", "Replicator", "Tricorder", "Operation", "Array", "Matrix", "Grid", "Sensor", "Mode", "Panel", "Storage", "Conduit", "Pod", "Hatch", "Regulator", "Display", "Inverter", "Spectrum", "Generator", "Cloud", "Field", "Terminal", "Module", "Procedure", "System", "Diagnostic", "Device", "Beam", "Probe", "Bank", "Tie-In", "Facility", "Bay", "Indicator", "Cell"];
+	let babblePhrases1;
+    let babblePhrases2;
+    let babblePhrases3;
     
-    // Proving number 4 on questions
-    //words1.splice(1,0); // doesnt work
-    //words1.push("foo"); // does work
-    
-    window.onload = initial;
+    window.onload = initJsonXHR;
 
-    // Generate at start
-    function initial() {
+    function initJsonXHR() {
+        const url = "./data/babble-data.json";
+        const xhr = new XMLHttpRequest();
+        xhr.onload = (e) => {
+            console.log(`In onload - HTTP Status Code = ${e.target.status}`);
+            
+            // Parsing JSon File
+            const json = JSON.parse(e.target.responseText);
+            const keys = Object.keys(json);
+            let lines1 = json[keys[0]]["babblelist"];
+            let lines2 = json[keys[1]]["babblelist"];
+            let lines3 = json[keys[2]]["babblelist"];
+            
+            // Parsing XML File
+            //const xml = e.target.responseXML;
+
+            //let lines1 = xml.querySelector("phraselist[cid='babbles1']").textContent.split(",");
+            //let lines2 = xml.querySelector("phraselist[cid='babbles2']").textContent.split(",");
+            //let lines3 = xml.querySelector("phraselist[cid='babbles3']").textContent.split(",");
+
+            // Parsing CSV File
+            //const text = e.target.responseText;
+            //console.log(`Sucess - the file length is ${text.length}`);
+            
+            //let lines = text.split("\n");
+            //let lines1 = lines[0].split(",");
+            //let lines2 = lines[1].split(",");
+            //let lines3 = lines[2].split(",");
+
+            // Set up globals
+            // Replace all source: https://www.baeldung.com/java-remove-start-end-double-quote#:~:text=To%20remove%20double%20quotes%20just,be%20replaced%20by%20empty%20strings.
+            babblePhrases1 = lines1.map(w => w.replaceAll("\"", "").trim());
+            babblePhrases2 = lines2.map(w => w.replaceAll("\"", "").trim());
+            babblePhrases3 = lines3.map(w => w.replaceAll("\"", "").trim());
+            
+            // Babble
+            initialBabble();
+        };
+        xhr.onerror = e => console.log(`In onerror - HTTP Status Code = ${e.target.status}`);
+        xhr.open("GET", url);
+        xhr.send();
+    }
+
+
+    // Generate at start after globals are set 
+    function initialBabble() {
         babble(1);
 
         document.querySelector("#my-button").onclick = function(){babble(1)};
         document.querySelector("#five-button").addEventListener('click', function(){babble(5)});
     }
-    
+
     // Generates Technobable from the three arrays, phrases represents an int value
     function babble (phrases) {
 
@@ -28,10 +67,9 @@
            return array[Math.floor(Math.random() * array.length)];
         }
         
-        
         //const bab += `${randomPhrase(words1)} ${randomPhrase(words2)} ${randomPhrase(words3)}`;
         for (let index = 0; index < phrases; index++) {
-            bab += randomPhrase(words1) + " " + randomPhrase(words2) + " " + randomPhrase(words3) + "<br>";           
+            bab += randomPhrase(babblePhrases1) + " " + randomPhrase(babblePhrases2) + " " + randomPhrase(babblePhrases3) + "<br>";           
         }
         
         console.log(bab);
