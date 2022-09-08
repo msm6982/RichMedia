@@ -63,9 +63,7 @@
     function babble (phrases) {
 
         let bab = "";
-        function randomPhrase (array) {
-           return array[Math.floor(Math.random() * array.length)];
-        }
+        const randomPhrase = array =>  array[Math.floor(Math.random() * array.length)];
         
         //const bab += `${randomPhrase(words1)} ${randomPhrase(words2)} ${randomPhrase(words3)}`;
         for (let index = 0; index < phrases; index++) {

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<petnames>
+  <namelist cid="dognames">
+  	<name uid="7174d633-9231-4c9e-8142-b206e20d8cd2" numLikes="1780" rating="5" gender="female">Bella</name>
+  	<name uid="d63c43ca-adc2-4cdc-b3f6-2c7c2c12b6c3" numLikes="3216" rating="5" gender="female">Luna</name>
+  	<name uid="e3d0ecfd-31ef-482c-a0d1-5fa6b1cb1dee" numLikes="9301" rating="4" gender="both">Charlie</name>
+  	<name uid="9a29e788-5b39-490f-a666-293309b776c2" numLikes="998" rating="4" gender="female">Lucy</name>
+  	<name uid="fa9f90ed-b7d6-4901-859c-6575dbfc0cb6" numLikes="6102" rating="3" gender="both">Cooper</name>
+  </namelist>
+  <namelist cid="catnames">
+  	<name uid="3f7f5111-2c16-4bb0-8376-85dacf25f69c" numLikes="8763" rating="5" gender="male">Oliver</name>
+  	<name uid="72a1c899-2a5f-465a-acf1-c8663c25b942" numLikes="4199" rating="5" gender="male">Leo</name>
+  	<name uid="f5e5c879-53e6-4675-8b18-c7d51df847d2" numLikes="2563" rating="4" gender="both">Milo</name>
+  	<name uid="b64cf07b-f8a8-4798-8465-686659b43a45" numLikes="4994" rating="4" gender="both">Charlie</name>
+  	<name uid="96e473b4-6776-42d2-8b10-172515ec4eb8" numLikes="2587" rating="5" gender="both">Simba</name>
+  </namelist>
+</petnames>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<title>XHR - Load XML</title>
+	<style>
+	body{
+	  font-family: sans-serif;
+	}
+	</style>
+
+</head>
+<body>
+	<h2>XHR - Load XML</h2>
+	
+	<button id="my-button">Load XML</button>
+	<p id="output">Click button to load</p>
+	
+
+<script>
+document.querySelector("#my-button").onclick = loadXML;
+	
+	function loadXML(){
+		const url = "data/pet-names.xml";
+		const xhr = new XMLHttpRequest();
+		xhr.onload = (e) => {
+			const xml = e.target.responseXML;
+			const dogNames = xml.querySelector("[cid='dognames']").textContent;
+			const words = dogNames.split(",");
+			const html = `<ol>${words.map(w => `<li>${w}</li>`).join("")}</ol>`;
+			document.querySelector("#output").innerHTML = html;
+		};
+		xhr.onerror = e => console.log(`In onerror - HTTP Status Code = ${e.target.status}`);
+		xhr.open("GET",url);
+		xhr.send();
+	}
+</script>
+</body>
+</html>
