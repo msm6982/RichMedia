@@ -12,9 +12,11 @@ span{
     font-family: sans-serif;
 }
 </style>
-<span></span>
+<span></span><span id="org"></span>
 <hr>
 `;
+
+
 
 
 class IGMFooter extends HTMLElement{
@@ -27,16 +29,22 @@ class IGMFooter extends HTMLElement{
       this.shadowRoot.appendChild(template.content.cloneNode(true));
     }
 
+
+    
+
     connectedCallback(){
         this.render();
     }
 
+    
+
     render(){
-        console.log(this.attributes['data-year'].value);
         const year = this.attributes['data-year'].value ? this.attributes['data-year'].value : "1995";
         const text = this.attributes['data-text'].value ? this.attributes['data-text'].value : "Nobody";
+        const org = this.attributes['data-organization'].value ? this.attributes['data-organization'].value : "RIT";
 
         this.shadowRoot.querySelector("span").innerHTML = `&copy; Copyright ${year}, ${text}`;
+        this.shadowRoot.querySelector("#org").innerHTML = `, Organization: ${org}`;
     }
   } 
 	
