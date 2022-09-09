@@ -1,0 +1,7 @@
+{
+  "title" : "Blackout Poetry Maker",
+  "subtitle" : "An in-class exercise for IGME-330",
+  "instructions-1" : "Instructions #1: Type or copy/paste some text below, then click button to convert it to clickable \"blackout\" text",
+  "instructions-2" : "Instructions #2: Now click the individual words below to black them out!",
+  "default-text" : "Fourscore and seven years ago our fathers brought forth on this continent a new nation, conceived in liberty and dedicated to the proposition that all men are created equal. Now we are engaged in a great civil war, testing whether that nation or any nation so conceived and so dedicated can long endure."
+}
