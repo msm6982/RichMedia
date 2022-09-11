@@ -28,13 +28,14 @@ class IGMFooter extends HTMLElement{
     }
 
     connectedCallback(){
+        // Create span element and add it to shadow dom 
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
         this.render();
     }
 
     render(){
-        console.log(this.attributes['data-year'].value);
-        const year = this.attributes['data-year'].value ? this.attributes['data-year'].value : "1995";
-        const text = this.attributes['data-text'].value ? this.attributes['data-text'].value : "Nobody";
+        const year = this.getAttribute('data-year') ? this.getAttribute('data-year') : "1995";
+        const text = this.getAttribute('data-text') ? this.getAttribute('data-text') : "Nobody";
 
         this.shadowRoot.querySelector("span").innerHTML = `&copy; Copyright ${year}, ${text}`;
     }
