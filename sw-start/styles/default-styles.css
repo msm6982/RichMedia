@@ -10,54 +10,17 @@
   src: url(../fonts/SfDistantGalaxyOutline-xoeO.ttf);
 }
 
-header{
-  color: white;
-  background-color: black;
-  padding: .5em;
-  user-select: none;
-  margin-bottom: .5rem;
-}
-header h1{
-  font-family: SfDistantGalaxy,sans-serif;
-  letter-spacing: 1px;
+.card-list{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
-header span{
-  font-variant: small-caps;
-  font-weight: bolder;
-  font-family: sans-serif;
-  font-style: italic;
+sw-card{
+  margin: 0 .5rem .5rem 0;
 }
 
 body{
   font-family: sans-serif;
 }
 
-#character-info{
-  height: 340px;
-  width: 170px;
-  border: 1px solid gray;
-  padding: .5rem;
-  background-color: #f4f4f4;
-  overflow: scroll;
-  font-size: .7rem;
-}
-
-#character-info h2{
-  font-size: 1.1rem;
-  font-family: SfDistantGalaxy, sans-serif;
-  letter-spacing: .67px;
-  line-height: 1.2;
-  margin-top: 0;
-}
-
-#character-pic{
-  width: 100px;
-}
-
-footer{
-  color: white;
-  background-color: black;
-  padding: .5rem;
-  margin-top: .5rem;
-}

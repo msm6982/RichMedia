@@ -1,15 +1,21 @@
 // all.json is from https://akabab.github.io/starwars-api/
 
+import "./sw-header.js";
+import"./sw-card.js";
+import"./sw-footer.js";
+import {loadFile} from "./utils.js";
+
 let swcJSON = {}; // "Star Wars Character JSON"
 
 const showCharacter = swcObj =>{
-  const section = document.querySelector("#character-info");
-  section.innerHTML = `
-    <h2>${swcObj.name ?? "Not found"}</h2>
-    <img src="${swcObj.image ?? 'images/catimage-no-image.png'}" id="character-pic" alt="mugshot">
-    <p>Height: ${swcObj.height ?? "Not found"}</p>
-    <p>Mass: ${swcObj.mass ?? "Not found"}</p>
-  `;
+  const swCard = document.createElement("sw-card");
+  swCard.dataset.name = swcObj.name ?? "no name found";
+  swCard.dataset.height = swcObj.height ?? "?";
+  swCard.dataset.mass = swcObj.mass ?? "?";
+  swCard.dataset.image = swcObj.image ?? "";
+  swCard.dataset.species = swcObj.species ?? "?";
+  swCard.dataset.masters = swcObj.masters ?? ["no one"];
+  document.querySelector(".card-list").appendChild(swCard);
 };
 
 const selectChange = e => {
@@ -19,14 +25,6 @@ const selectChange = e => {
   if(swcObj) showCharacter(swcObj);
 };
 
-
-const loadFile = (url,callback) => {
-  const fetchPromise = async () => {
-    const response = await fetch(url);
-    callback(await response.json());
-  }
-  fetchPromise();
-};
 
 const jsonLoaded = json => {
   // `json` is actually an array (legal JSON can be either an array or an object at its root)
@@ -44,7 +42,7 @@ const jsonLoaded = json => {
   const select = document.querySelector("#character-select");
   select.innerHTML = optionHTML;
   select.onchange = selectChange;
-  showCharacter({name: "Stormtrooper Tim",height:100,mass:30})
+  showCharacter({name: "Stormtrooper Tim",height:100,mass:30,species:"human", masters: ["Darth Vader"]})
 };
 
 const init = () => {
