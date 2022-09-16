@@ -1,3 +1,5 @@
+
+
 const template = document.createElement("template");
 template.innerHTML = `
 <style>
@@ -22,33 +24,21 @@ class SWFooter extends HTMLElement{
         super();
 
         this.attachShadow({mode:"open"});
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
         
     }
 
     connectedCallback() {
         // Create span element and add it to shadow dom 
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        
         this.footer = this.shadowRoot.querySelector("footer");
 
         this.render();
     }
 
-    disconnectedCallback() {
-        this.onclick = null;
-    }
-
-    attributeChangedCallback(attributeName, oldVal, newVal){ 
-        //console.log(attributeName, oldVal, newVal);
-        this.render();
-    }
-
-    static get observedAttributes(){
-        return ["data-footer"];
-    }
-
     render(){
         const footerText = this.dataset.footer ? this.dataset.footer : "Unknow attribute";
-        this.footer.innerHTML = `${footerText}`;
+        if (this.footer) this.footer.innerHTML = `${footerText}`;
     }
 }
 

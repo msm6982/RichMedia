@@ -1,3 +1,5 @@
+import {deleteCharacter} from './main.js'
+
 const template = document.createElement("template");
 template.innerHTML = `
 <style>
@@ -66,12 +68,13 @@ class SWCard extends HTMLElement{
         super();
 
         this.attachShadow({mode:"open"});
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
         
     }
 
     connectedCallback() {
         // Create span element and add it to shadow dom 
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        
         this.h2 = this.shadowRoot.querySelector("h2");
         this.img = this.shadowRoot.querySelector("img");
         this.p1 = this.shadowRoot.querySelector("#swcHeight");
@@ -87,7 +90,7 @@ class SWCard extends HTMLElement{
 
     
     disconnectedCallback() {
-        this.onclick = null;
+        deleteCharacter(this);
         this.button.onclick = null;
     }
 
@@ -115,12 +118,12 @@ class SWCard extends HTMLElement{
         let masterHtml = "";
         mastersList.split(",").forEach(m => { masterHtml += `<li>${m}</li>`; });
 
-        this.h2.innerHTML = `${name}`;
-        this.p1.innerHTML = `Height: ${height}`;
-        this.p2.innerHTML = `Mass: ${mass}`;
-        this.p3.innerHTML = `Species: ${species}`;
-        this.list.innerHTML = masterHtml;
-        this.img.src = imageUrl;
+        if (this.h2) this.h2.innerHTML = `${name}`;
+        if (this.p1) this.p1.innerHTML = `Height: ${height}`;
+        if (this.p2) this.p2.innerHTML = `Mass: ${mass}`;
+        if (this.p3) this.p3.innerHTML = `Species: ${species}`;
+        if (this.list) this.list.innerHTML = masterHtml;
+        if (this.img) this.img.src = imageUrl;
     }
 }
 

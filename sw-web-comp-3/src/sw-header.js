@@ -31,14 +31,16 @@ template.innerHTML = `
 class SWHeader extends HTMLElement{
     constructor(){
         super();
+        
 
         this.attachShadow({mode:"open"});
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
         
     }
 
     connectedCallback() {
         // Create span element and add it to shadow dom 
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        
         this.h1 = this.shadowRoot.querySelector("h1");
         this.span = this.shadowRoot.querySelector("span");
         this.quotes = ["I've got a bad feeling about this ...","Will someone get this big walking carpet out of my way?!","Aren’t you a little short for a stormtrooper?","I hope you know what you’re doing.","Oh, it’s not like that at all. He’s my brother.","We have powerful friends. You’re going to regret this."];
@@ -71,8 +73,8 @@ class SWHeader extends HTMLElement{
 
     render(){
         const title = this.dataset.title ? this.dataset.title : "Star Wars";
-        this.h1.innerHTML = `${title}`;
-        this.span.innerHTML = `${this.currentQuote}`;
+        if (this.h1) this.h1.innerHTML = `${title}`;
+        if (this.span) this.span.innerHTML = `${this.currentQuote}`;
     }
 }
 

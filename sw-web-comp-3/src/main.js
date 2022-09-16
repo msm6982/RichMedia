@@ -1,4 +1,5 @@
 // all.json is from https://akabab.github.io/starwars-api/
+const cards = []; 
 
 import "./sw-header.js";
 import"./sw-card.js";
@@ -16,7 +17,14 @@ const showCharacter = swcObj =>{
   swCard.dataset.species = swcObj.species ?? "?";
   swCard.dataset.masters = swcObj.masters ?? ["no one"];
   document.querySelector(".card-list").appendChild(swCard);
+  cards.push(swCard);
+  console.log(cards);
 };
+
+const deleteCharacter = swcObj => {
+  cards.pop(swcObj);
+};
+export {deleteCharacter};
 
 const selectChange = e => {
   const swcID = e.target.value;
