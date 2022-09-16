@@ -28,10 +28,10 @@ class IGMFooter extends HTMLElement{
       
       // attach a shadow DOM tree to this instance
       this.attachShadow({mode:"open"});
-       /*
+      
       // Create span element and add it to shadow dom 
       this.shadowRoot.appendChild(template.content.cloneNode(true));
-
+      /*
       // put this at the end of the constructor
       if(!this.dataset.year) this.dataset.year = 1989;
       if(!this.dataset.text) this.dataset.text = "Bill & Ted";
@@ -41,6 +41,7 @@ class IGMFooter extends HTMLElement{
       
       this.count = 0;
       */
+
     }
 
     static get observedAttributes(){
@@ -55,9 +56,7 @@ class IGMFooter extends HTMLElement{
     
 
     connectedCallback(){
-        // Create span element and add it to shadow dom 
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
-
+        
         // put this at the end of the constructor
         if(!this.dataset.year) this.dataset.year = 1989;
         if(!this.dataset.text) this.dataset.text = "Bill & Ted";

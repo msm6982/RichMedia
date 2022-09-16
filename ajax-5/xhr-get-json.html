@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<title>XHR - Load JSON</title>
+	<style>
+	body{
+	  font-family: sans-serif;
+	}
+	</style>
+
+</head>
+<body>
+	<h2>XHR - Load JSON</h2>
+	
+	<button id="my-button">Load JSON</button>
+	<p id="output">Click button to load</p>
+	
+
+<script>
+document.querySelector("#my-button").onclick = loadJsonFetch;
+
+function loadJsonFetch(){
+	fetch('data/pet-names-2.json') // get a Star Wars character
+	.then(response => {
+
+		if(response.ok){
+			return response.json();
+		}
+		return response.text().then(text =>{
+			throw text;
+		});
+	})
+	.then(json => {
+		console.log(json);
+		const dogNames = json.dognames.namelist;
+		console.log(json.dognames);
+		const dogTitle = json.dognames.title;
+		let html = `${dogTitle}<br><ol>${dogNames.map(w => `<li>${w}</li>`).join("")}</ol>`;
+		
+		const catNames = json.catnames.namelist;
+		const catTitle = json.catnames.title;
+		html += `${catTitle}<br><ol>${catNames.map(w => `<li>${w}</li>`).join("")}</ol>`;
+
+		const birdNames = json.birdnames.namelist;
+		const birdTitle = json.birdnames.title;
+		html += `${birdTitle}<br><ol>${birdNames.map(w => `<li>${w}</li>`).join("")}</ol>`;
+		document.querySelector("#output").innerHTML = html;
+		
+	}).catch(error => {
+		//error
+		console.log(error);
+	});
+}
+	/*
+	function loadJSON(){
+		const url = "data/pet-names-2.json";
+		const xhr = new XMLHttpRequest();
+		xhr.onload = (e) => {
+			let text = e.target.responseText;
+			let json;
+			try{
+				json = JSON.parse(text);
+			}catch(e){
+				console.log("There was an error! e=",e);
+				return; // bail out
+			}
+		
+			const words = json["dognames"].namelist;
+			const html = `<ol>${words.map(w => `<li>${w}</li>`).join("")}</ol>`;
+			document.querySelector("#output").innerHTML = html;
+		};
+		xhr.onerror = e => console.log(`In onerror - HTTP Status Code = ${e.target.status}`);
+		xhr.open("GET",url);
+		xhr.send();
+	}
+	*/
+</script>
+</body>
+</html>

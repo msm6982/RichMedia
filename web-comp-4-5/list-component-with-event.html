@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>&lt;my-list> Component Demo</title>
+  <style>
+    h1{
+      font-family: sans-serif;
+    }
+	  
+    /* https://www.w3schools.com/howto/howto_css_equal_height.asp */
+    /* https://stackoverflow.com/questions/18346083/space-between-divs-display-table-cell/18346159 */
+    .col-container{
+      display: table;
+      border-collapse: separate;
+      border-spacing: 10px;
+    }
+
+    .col-container > my-list{
+      display: table-cell;
+      border: 1px solid black;
+      width: 150px;
+      max-width: 150px;
+      overflow: auto;
+     }	
+  </style>
+  <!-- Web Components Polyfill for older browsers -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/2.6.0/webcomponents-loader.min.js"></script>
+  <script src="src/main.js" type="module"></script> 
+</head>
+<body>
+
+	<h1><kbd>&lt;my-list></kbd> component demo</h1>
+	<main class="col-container">
+		<my-list id="color-list"></my-list>
+		<my-list id="movie-list"></my-list>
+	</main>
+
+	<p><button id="btn-add">Add Color</button> <input id="input-text" type="text"></p>
+	<button id="btn-clear">Clear List</button>
+	<p>Color List length = <span id="output-text"></span></p>
+</body>
+</html>
