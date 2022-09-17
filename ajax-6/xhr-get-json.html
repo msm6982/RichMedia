@@ -22,17 +22,15 @@
 document.querySelector("#my-button").onclick = loadJsonFetch;
 
 function loadJsonFetch(){
-	fetch('data/pet-names-2.json') // get a Star Wars character
-	.then(response => {
+	const fetchPromise = async () => {
+		let response = await fetch('data/pet-names-2.json');
 
-		if(response.ok){
-			return response.json();
+		if(!response.ok){
+			throw new Error(`HTTP error! status: ${response.status}`);
 		}
-		return response.text().then(text =>{
-			throw text;
-		});
-	})
-	.then(json => {
+
+		let json = await response.json();
+
 		console.log(json);
 		const dogNames = json.dognames.namelist;
 		console.log(json.dognames);
@@ -47,12 +45,14 @@ function loadJsonFetch(){
 		const birdTitle = json.birdnames.title;
 		html += `${birdTitle}<br><ol>${birdNames.map(w => `<li>${w}</li>`).join("")}</ol>`;
 		document.querySelector("#output").innerHTML = html;
-		
-	}).catch(error => {
-		//error
-		console.log(error);
+	};
+
+	fetchPromise()
+	.catch(e => {
+		console.log(`In catch with e = ${e}`);
 	});
 }
+	
 	/*
 	function loadJSON(){
 		const url = "data/pet-names-2.json";
