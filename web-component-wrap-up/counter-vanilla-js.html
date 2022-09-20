@@ -1,0 +1,79 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Counter - VanillaJS</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <script type="module">
+    /*
+    Counter - VanillaJS Version
+    Advantages: 
+      1) Best browser compatibility because it's "Vanilla"
+      2) Easy to quickly throw together a small app for proof of concept
+      3) No 3rd-party dependencies means that the code won't be obsolete for a long time
+      4) Works well for a solo programmer
+    Disadvantages:
+      1) Potentially more idiomatic code than using a framework
+      2) All the code being in one file makes any reuse of pieces of the code more difficult
+      3) It also makes it harder for multiple developers to work on the code simultaneously
+      4) The above can make updates/maintenance/testing of the code more difficult
+    */
+    let count = 0;
+    let output;
+
+    const updateOutput = () => {
+      output.innerHTML = `Count: ${count}`;
+    };
+   
+    const initUI = (params) => {
+      const titleElement = document.querySelector(".title");
+      const subtitleElement = document.querySelector(".subtitle");
+      const authorElement = document.querySelector("#author");
+      const yearElement = document.querySelector("#year");
+      
+      titleElement.innerHTML = params.title || "No title provided";
+      subtitleElement.innerHTML = params.subtitle || "No subtitle provided";
+      authorElement.innerHTML = params.author || "No author provided";
+      yearElement.innerHTML = params.year || "No year provided";
+
+      output = document.querySelector("#output");
+      updateOutput();
+
+      const btnMinus = document.querySelector("#btn-minus");
+      const btnPlus = document.querySelector("#btn-plus");
+    
+      btnMinus.onclick = () => {
+        count -= 1;
+        updateOutput();
+      };
+
+      btnPlus.onclick = () => {
+        count += 1;
+        updateOutput();
+      };
+    };
+
+    initUI({
+      title: "Counter App",
+      subtitle: "VanillaJS Version",
+      author: "Ace Coder",
+      year: "2022"
+    });
+  </script>
+</head>
+<body>
+  <header class="hero is-info">
+    <div class="hero-body">
+      <h1 class="title">???</h1>
+      <h2 class="subtitle">???</h2>
+    </div>
+  </header>
+  <main class="container is-info m-2">
+    <button id="btn-minus" class="button is-large is-warning">-1</button>
+    <button id="btn-plus" class="button is-large is-primary">+1</button>
+    <span id="output" class="is-size-2 ml-2">Count: ??</span>
+  </main>
+  <footer class="footer pt-1 pb-1 has-text-centered">By <span id="author">???</span> - &copy; <span id="year">???</span></footer>
+</body>
+</html>
