@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haiku Generator Documentation</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="styles/default-styles.css">
+  <script src="src/loader.js" type="module"></script>
+</head>
+<body>
+  <nav class="navbar has-shadow is-white">
+    <!-- log / brand -->
+    <div class="navbar-brand">
+      <a class="navbar-item" href="home.html">
+        <i class="fas fa-solid fa-feather"></i>
+      </a>
+      <a class="navbar-burger" id="burger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </a>
+    </div>
+    
+
+    <div class="navbar-menu" id="nav-links">
+      <div class="navbar-start">
+        <a class="navbar-item is-hoverable " href="home.html">
+          Home
+        </a>
+
+        <a class="navbar-item is-hoverable" href="app.html">
+          App
+        </a>
+      
+        <a class="navbar-item is-hoverable" href="favorites.html">
+          Favorites
+        </a>
+      
+        <span class="navbar-item is-hoverable has-text-weight-bold">Documentation</span>
+      </div> <!-- end navbar-start -->
+    </div>
+  </nav>
+
+<!-- Main Page -->
+<main class="px-1 py-1">
+  <div class="has-background-info mr-1 p-1"> 
+    <div class="is-large p-4">
+      <!-- Row #1 -->
+
+      <div class="has-text-light"><haiku-title data-title="Documentation"></haiku-title></div>
+      
+      <!-- Row #2  -->
+      <div class="box mt-2">
+        <h2 class="subtitle has-text-weight-bold mb-0">Resources</h2>
+        <ol>
+          <li>Haiku Image Source: <a href="https://www.grammarly.com/blog/how-to-write-haiku/">Grammarly</a></li>
+          <li>This app would allow users to generate Haiku based on user input, the user can input a single word or phrase, a maximum of 7 syllables, and the user will be able to generate a number of random Haikus, that the user also decides, that will contain the phrase or word. <br>
+             Users then have the option then save their generated Haikus, posting them to a community page where users can like each other's Haikus. This will be a fun tool for creative writing enthusiasts and can spark inspiration based on the random nature of the generation around a single subject.<br>
+              I will be using RiTa.js  and Firebase as my primary web services to make the app possible </li>
+          <li>RiTa.js documentation: <a href="https://rednoise.org/rita/">RiTa.js</a></li>
+          <li>Firebase documentation: <a href="https://firebase.google.com/docs">Firebase</a></li>
+        </ol>
+        <img src="./images/rough-sketch.jpg" style="width:30%" alt="rough notebook sketch of app UI">
+      </div>
+    </div>
+    <haiku-footer data-footer="msm6982@rit.edu Updated 2022"></haiku-footer>
+  </div>
+</main>
+
+  <script src="src/index.js"></script>
+</body>
+</html>

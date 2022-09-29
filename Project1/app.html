@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DogFinder App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="styles/default-styles.css">
+  <script src="src/loader.js" type="module"></script>
+  
+  <style>
+    select#field-limit{
+      width:2.5rem;
+    }
+    h2.subtitle{
+      font-family:'Underdog',sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar has-shadow is-white">
+    <!-- log / brand -->
+    <div class="navbar-brand">
+      <a class="navbar-item" href="home.html">
+        <i class="fas fa-solid fa-feather"></i>
+      </a>
+      <a class="navbar-burger" id="burger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </a>
+    </div>
+    
+
+    <div class="navbar-menu" id="nav-links">
+      <div class="navbar-start">
+        <a class="navbar-item is-hoverable" href="home.html">
+          Home
+        </a>
+
+        <span class="navbar-item is-hoverable has-text-weight-bold">App</span>
+      
+        <a class="navbar-item is-hoverable" href="favorites.html">
+          Favorites
+        </a>
+      
+        <a class="navbar-item is-hoverable" href="documentation.html">
+          Documentation
+        </a>
+      </div> <!-- end navbar-start -->
+    </div>
+  </nav>
+
+<!-- Main Page -->
+  <main class="px-1 py-1">
+    <div class="has-background-info mr-1 p-1">
+      <div class="is large p-4">
+        <!-- Row #1 -->
+        <div class="has-text-light"><haiku-title data-title="Haiku Generator Home" data-subtitle="Make Haikus Here!"></haiku-title></div>
+
+        <!-- Row #2 Instructions -->
+        <div class="box mt-2">
+          
+
+          <!-- Row #2 Controls -->
+          <div id="box-controls" class="box">
+            <div class="control is-inline-block mr-3">
+              <span class="subtitle has-text-weight-bold">Breed:</span>
+              <select id="field-breed" class="select is-primary is-small">
+                <option>Dobberman</option>
+                <option>Poodle</option>
+              </select>
+            </div>
+            
+            <div class="control is-inline-block">
+              <span class="subtitle has-text-weight-bold">Number of results:</span>
+              <select id="field-limit" class="select is-primary is-small">
+                <option>1</option>
+                <option>5</option>
+                <option>10</option>
+              </select>
+            </div>
+
+            <div class="control is-inline-block ml-6">
+              <button id="btn-search" 
+              class="button is-primary is-medium" 
+              title="Search for some dog pictures">
+              Search!
+              </button>
+            </div>
+
+            <div class="control is-inline-block ml-6">
+              <button
+              id="btn-clear-all"
+              class="button is-warning is-medium"
+              title="Clear all Results!">
+              Clear All Results!
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Row #3 Results -->
+        <div class="box has-background-info-dark">
+          <div class="is-large p-1">
+            <h2 class="subtitle has-text-weight-bold mb-2 mt-0 has-text-light">My Results</h2>
+            <p id = "element-status" class="has-text-warning mb-2">Click the <b>Search</b> button to view dog images</p>
+            <div id="element-card-holder">
+              <!-- Search results go here! -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <haiku-footer data-footer="msm6982@rit.edu Updated 2022"></haiku-footer>
+  </main>
+  
+
+  <script src="src/index.js"></script>
+</body>
+</html>
