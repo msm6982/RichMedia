@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotdog App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<style>
+    /* CSS attribute selector */
+		input[type='text']{ 
+			width:50%;
+		}
+
+    .box{
+      width:95%;
+    }
+
+    ol{
+      list-style-position: inside;
+    }
+	</style>
+	<script type="module" src="src/loader.js"></script>
+  <script type="module" src="src/app.js"></script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar has-shadow is-white">
+    <!-- logo / brand -->
+    <div class="navbar-brand">
+      <a class="navbar-item" href="app.html">
+        <i class="fas fa-hotdog"></i>
+      </a>
+      <a class="navbar-burger" id="burger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </a>
+    </div>
+    <div class="navbar-menu" id="nav-links">
+      <div class="navbar-start">
+        <a class="navbar-item has-text-weight-bold">
+          App
+        </a>
+
+        <a class="navbar-item" href="favorites.html">
+          Favorites
+        </a>
+      </div> <!-- end navbar-start -->
+    </div>   <!-- end navbar-menu -->
+  </nav>
+
+  <!-- Main Page -->
+  <main class="pr-1">
+    <div class="columns mx-1 my-1">
+      <!-- Left Column -->
+      <div class="column has-background-info is-three-quarters mr-1">  
+        <div class=" is-large p-2">
+          <!-- Row #1 -->
+          <div class="title has-text-light">
+            ???
+          </div>
+          <div class="subtitle has-text-light">
+          The first and only stop for hotdog <i>connoisseurs</i>!
+          </div>
+
+          <!-- Row #2 -->
+          <div class="box">
+            <p class="has-text-weight-bold pb-1">
+              Type in a kind of hotdog, and click the button to "favorite" it!<br> Then head over to the <i>Favorites</i> page to see it!
+            </p>
+
+            <p class="pb-3">
+              <input id="input-favorite" type="text" class="input" placeholder="Veggie Dog">
+              <button 
+                id="btn-add-favorite"
+                class="button is-primary" 
+                title="Add a hotdog to your favorites list!"
+              >
+                Add to list!
+              </button>
+            </p>
+          </div>
+
+          <!-- Row #3 -->
+          <div class="box">
+            <p class="has-text-weight-bold pb-1">
+              Type in a new app title, and then click the button to save it!
+            </p>
+            <p>
+              <input id="input-title" type="text" class="input" placeholder="App Title">
+              <button
+                id="btn-change-title" 
+                class="button is-primary" 
+                title="Change the title of this app!"
+              >
+                Change App Title!
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- Right Column -->
+      <div class="column has-background-success is-one-quarter">
+        <h2 class="subtitle has-text-weight-bold mb-0">Instructions</h2>
+        <ol>
+          <li>???</li>
+          <li>???</li>
+          <li>???</li>
+        </ol>
+        <h2 class="subtitle has-text-weight-bold mb-0 mt-2">Some Info</h2>
+        <ol>
+          <li>Winkin</li>
+          <li>Blinkin</li>
+          <li>Nod</li>
+        </ol>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Footer -->
+  <hotdog-footer>Contact: ace.coder@rit.edu</hotdog-footer>
+</body>
+</html>
