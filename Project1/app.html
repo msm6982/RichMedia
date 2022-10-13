@@ -5,11 +5,14 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DogFinder App</title>
+  <title>Haiku Generator App</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="styles/default-styles.css">
-  <script src="src/loader.js" type="module"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/rita"></script>
+  <script src="./src/loader.js" type="module"></script>
+  <script src="./src/app.js" type="module"></script>
   
   <style>
     select#field-limit{
@@ -68,11 +71,8 @@
           <!-- Row #2 Controls -->
           <div id="box-controls" class="box">
             <div class="control is-inline-block mr-3">
-              <span class="subtitle has-text-weight-bold">Breed:</span>
-              <select id="field-breed" class="select is-primary is-small">
-                <option>Dobberman</option>
-                <option>Poodle</option>
-              </select>
+              <span class="subtitle has-text-weight-bold">Phrase</span>
+                <input id="haiku-input" class="input" type="text" placeholder="Text input">
             </div>
             
             <div class="control is-inline-block">
@@ -87,7 +87,7 @@
             <div class="control is-inline-block ml-6">
               <button id="btn-search" 
               class="button is-primary is-medium" 
-              title="Search for some dog pictures">
+              title="Generate some Haikus!">
               Search!
               </button>
             </div>
@@ -106,7 +106,7 @@
         <div class="box has-background-info-dark">
           <div class="is-large p-1">
             <h2 class="subtitle has-text-weight-bold mb-2 mt-0 has-text-light">My Results</h2>
-            <p id = "element-status" class="has-text-warning mb-2">Click the <b>Search</b> button to view dog images</p>
+            <p id = "element-status" class="has-text-warning mb-2">Click the <b>Search</b> button to view Haikus</p>
             <div id="element-card-holder">
               <!-- Search results go here! -->
             </div>
