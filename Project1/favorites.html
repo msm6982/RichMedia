@@ -9,7 +9,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="styles/default-styles.css">
-  <script src="src/loader.js" type="module"></script>
+  <script src="./src/loader.js" type="module"></script>
+  <script src="./src/favorites.js" type="module"></script>
 </head>
 <body>
   <nav class="navbar has-shadow is-white">
@@ -52,7 +53,14 @@
       <!-- Row #1 -->
       <div class="has-text-light"><haiku-title data-title="Haiku Favorites" data-subtitle="Checkout your favorite Haikus below!"></haiku-title></div>
       
-      
+      <div class="control is-inline-block ml-6">
+        <button
+        id="clear-btn"
+        class="button is-warning is-medium"
+        title="Clear all Favorites!">
+        Clear All Favorites!
+        </button>
+      </div>
 
       <!-- Row #3 -->
       <div class="box has-background-info-dark"> 
