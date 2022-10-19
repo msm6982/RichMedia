@@ -45,10 +45,18 @@ class HaikuResultsCard extends HTMLElement{
       const dataObj = {
         "line1" : this.dataset.line1,
         "line2" : this.dataset.line2,
-        "line3" : this.dataset.line3
+        "line3" : this.dataset.line3,
       };
       this.callback(dataObj);
+      this.disableFavoriteBtn();
     };
+  }
+
+  disableFavoriteBtn() {
+    this.btnFavorite.innerHTML = "Favorited!"
+    this.btnFavorite.disabled = true;
+    this.btnFavorite.classList.remove('is-primary');
+    this.btnFavorite.classList.add('is-warning');
   }
 
   disconnectedCallback(){
