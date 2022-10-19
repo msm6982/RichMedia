@@ -37,6 +37,7 @@ const showHaikus = (e) =>{
     // syllable count check if it's less than 7 
     // Multi-Splitting of strings
     syllableCount = RiTa.syllables(`${haikuInput.value}`).split(" ").join(",").split("/").join(",").split(",")
+    
     //console.log(syllableCount);
     if(syllableCount.length > 7)
     {
@@ -86,7 +87,7 @@ function createHaiku()
     let phrasePos = Math.floor(Math.random() * 3);
     
     // 7 syllable line
-    if(syllableCount>5) phrasePos = 1;
+    if(syllableCount.length>5) phrasePos = 1;
 
     for (let j = 0; j < 3; j++) {
         // Add the phrase to the list on the random
