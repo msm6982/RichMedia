@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getDatabase, ref, set, push, onValue, increment } from  "https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js";
+import { getDatabase, ref, set, push, onValue, increment, get } from  "https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -12,22 +12,49 @@ const firebaseConfig = {
     appId: "1:117993334428:web:6a8c1f2e7ac68ed2ceef59"
 };
 
+const app = initializeApp(firebaseConfig);
+//console.log(app);
+
 const likedHaikuPath = "liked-haikus/";
 
-const pushLikedHaikusToCloud = haiku => {
+const pushLikedHaikusToCloud = (haiku,incrementVal) => {
   const db = getDatabase();
   // Have the firebase reference be the first line of the poem 
   const favRef = ref(db, `${likedHaikuPath}${haiku.line1.replace("/", "")}`);
-  console.log(favRef);
+  //console.log(favRef);
   set(favRef, {
-    haiku,
-    likes: increment(1)
+    line1 : haiku.line1,
+    line2 : haiku.line2,
+    line3 : haiku.line3,
+    likes: increment(incrementVal)
   }); // `dog` is an object with `.title`, `.url`, `.likes` properties etc
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-console.log(app);
-const db = getDatabase();
+const favoritesChanged = (snapshot) => {
+  //const db = getDatabase();
+  //const haikusRef = await getDocs(collection(db,`${likedHaikuPath}`))
+  //const haikusRef = query(collection(db,"liked-haikus"), where);
 
-export {db,likedHaikuPath as likedHaikuPath,ref,set,push,pushLikedHaikusToCloud as pushLikedHaikusToCloud,onValue};
+  //console.log(snapshot);
+
+  snapshot.forEach((haiku) => {
+  //console.log(`Key ${haiku.key} and Likes ${haiku.val().likes}`)
+  });
+}
+
+const init = () =>
+{
+  const db = getDatabase();
+  const favoritesRef = ref(db, `${likedHaikuPath}`);
+  onValue(favoritesRef,favoritesChanged);
+}
+
+init();
+//onValue(scoresRef,scoresChanged);
+
+// Initialize Firebase
+
+
+
+
+export {likedHaikuPath as likedHaikuPath,ref,set,get,push,pushLikedHaikusToCloud as pushLikedHaikusToCloud,onValue};

@@ -35,6 +35,7 @@ class HaikuResultsCard extends HTMLElement{
   }
 
   connectedCallback() {
+    //this.dataset.addedToFavorites = null;
     this.shadowRoot.querySelector("#line1").innerHTML = this.dataset.line1;
     this.shadowRoot.querySelector("#line2").innerHTML = this.dataset.line2;
     this.shadowRoot.querySelector("#line3").innerHTML = this.dataset.line3;
@@ -42,22 +43,45 @@ class HaikuResultsCard extends HTMLElement{
     this.btnFavorite = this.shadowRoot.querySelector("#fav-btn");
     this.callback = this.callback || ((obj) => console.log(`Haiku Line1: ${obj.line1}, Line2: ${obj.line2}, Line3: ${obj.line3}`));
     this.btnFavorite.onclick = (e) => {
+      // Remove from favorites
+      console.log(this.dataset.addedToFavorites);
+      if(this.dataset.addedToFavorites == "false"){
+        
+        this.dataset.addedToFavorites = true;
+        
+        this.favoritedHaikuBtn();
+      }
+
+      // Add to favorites 
+      else {
+        this.dataset.addedToFavorites = false;
+        this.unFavoritedHaikuBtn();
+       
+      }
+      
       const dataObj = {
-        "line1" : this.dataset.line1,
-        "line2" : this.dataset.line2,
-        "line3" : this.dataset.line3,
+      "line1" : this.dataset.line1,
+      "line2" : this.dataset.line2,
+      "line3" : this.dataset.line3,
+      "addedToFavorites" : this.dataset.addedToFavorites
       };
+
       this.callback(dataObj);
-      this.disableFavoriteBtn();
     };
   }
 
-  disableFavoriteBtn() {
+  favoritedHaikuBtn() {
     this.btnFavorite.innerHTML = "Favorited!"
-    this.btnFavorite.disabled = true;
     this.btnFavorite.classList.remove('is-primary');
     this.btnFavorite.classList.add('is-warning');
   }
+
+  unFavoritedHaikuBtn() {
+    this.btnFavorite.innerHTML = "Favorite!"
+    this.btnFavorite.classList.remove('is-warning');
+    this.btnFavorite.classList.add('is-primary');
+  }
+  
 
   disconnectedCallback(){
     this.btnFavorite.onclick = null;

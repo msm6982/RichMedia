@@ -71,9 +71,21 @@ const showHaikus = (e) =>{
 }
 
 const addToFavorites = (haikuObj) => {
-    storage.addFavorite(haikuObj);
-    firebase.pushLikedHaikusToCloud(haikuObj);
-
+    console.log(haikuObj);
+    
+    if(haikuObj.addedToFavorites == 'true')
+    {
+        storage.addFavorite(haikuObj);
+        firebase.pushLikedHaikusToCloud(haikuObj, 1);
+        console.log("adding to favorite");
+    }
+    else
+    {
+        storage.removeFavorite(haikuObj);
+        firebase.pushLikedHaikusToCloud(haikuObj, -1);
+        console.log("removing from favorite");
+    }
+    // Increment by 1
 }
 
 
@@ -85,6 +97,7 @@ const createHaikuResults = (haiku) => {
     newHaiku.dataset.line1 = splitHaiku[0];
     newHaiku.dataset.line2 = splitHaiku[1];
     newHaiku.dataset.line3 = splitHaiku[2];
+    newHaiku.dataset.addedToFavorites = false;
     newHaiku.callback = addToFavorites; 
     cardsElement.appendChild(newHaiku);
 }

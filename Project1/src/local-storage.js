@@ -23,10 +23,30 @@ const defaultData = {
   
   export const clearLocalStorage = () => writeLocalStorage(defaultData);
   
+  export const removeFavorite = (str) => {
+    const allValues = readLocalStorage();
+
+    const haikuObj = {
+      "line1" : str.line1,
+      "line2" : str.line2,
+      "line3" : str.line3,
+      };
+
+    allValues.haikus.pop();
+    //if (index > -1)  allValues.haikus.splice(index, 1); 
+    
+    writeLocalStorage(allValues);
+  }
+
   export const addFavorite = (str) => {
     const allValues = readLocalStorage();
+    const haikuObj = {
+      "line1" : str.line1,
+      "line2" : str.line2,
+      "line3" : str.line3,
+      };
   
-    allValues.haikus.push(str);
+    allValues.haikus.push(haikuObj);
     writeLocalStorage(allValues);
   };
   

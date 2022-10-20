@@ -1,5 +1,6 @@
 import "./haiku-card.js";
 import * as storage from "./local-storage.js";
+import * as firebase from "./firebase.js";
 
 
 let listFavorites = null,
@@ -15,6 +16,7 @@ const showFavorites = () =>{
         newHaiku.dataset.line1 = f.line1;
         newHaiku.dataset.line2 = f.line2;
         newHaiku.dataset.line3 = f.line3;
+        newHaiku.dataset.addedToFavorites = true;
         cardsElement.appendChild(newHaiku);
     }
     
