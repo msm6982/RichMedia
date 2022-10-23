@@ -13,12 +13,29 @@ let syllableCount = 0;
 
 const init = () =>{
 
+    //storage.clearLocalStorage();
+
     fieldLimit = document.querySelector("#field-limit");
     haikuInput = document.querySelector("#haiku-input");
     cardsElement = document.querySelector("#element-card-holder");
     searchBtn = document.querySelector("#btn-search");
     statusInfo = document.querySelector("#element-status");
+
+    // Insert the locally saved search changes
+    //console.log(storage.getSavedNumeralInput());
+    //fieldLimit.target.value = parseInt(storage.getSavedNumeralInput());
+    haikuInput.value = storage.getSavedSearch();
+    statusInfo.innerHTML = storage.getSavedUI();
+    
+    
     generationNum = fieldLimit.value;
+
+    // Insert the last search term's saved haikus
+    let savedHaikus = storage.getRecentlySearchedHaikus();
+    for (let i = 0; i < savedHaikus.length; i++) {
+        createHaikuResults(savedHaikus[i]);
+    }
+
 
     fieldLimit.onchange = (e) => {
         generationNum = e.target.value;
@@ -27,13 +44,13 @@ const init = () =>{
 
     searchBtn.onclick = (e) =>{
         e.target.classList.add("is-loading");
-        showHaikus();
+        showSearchResult();
         
     }
 }
 window.onload = init;
 
-const showHaikus = (e) =>{
+const showSearchResult = (e) =>{
     
 
     // syllable count check if it's less than 7 
@@ -44,22 +61,23 @@ const showHaikus = (e) =>{
     // The ammount of spits form dashes determine the number of stressed syllables  
     syllableCount = RiTa.syllables(`${haikuInput.value}`).split(" ").join(",").split("/").join(",").split(",").filter(words => words.length > 0)
     
+    // Don't compete a search if what whas seached goes against the formating of a haiku
+    let tooManySyl = syllableCount.length > 7;
+    let nothingEntered = haikuInput.value.trim() == "";
     
-    //console.log(syllableCount);
-    if(syllableCount.length > 7)
+    if(tooManySyl || nothingEntered)
     {
-        statusInfo.innerHTML = `<b>${haikuInput.value}</b> has <b>too many</b> syllables for a Haiku!<br> Remember <b>5-7-5</b>`
-        searchBtn.classList.remove("is-loading");
-        return;
-    }
-    if(haikuInput.value.trim() == "")
-    {
-        statusInfo.innerHTML = `<b>Type</b> a phrase to Generate a Haiku!`
+        if(tooManySyl) statusInfo.innerHTML = `<b>${haikuInput.value}</b> has <b>too many</b> syllables for a Haiku!<br> Remember <b>5-7-5</b>`;
+
+        if(nothingEntered) statusInfo.innerHTML = `<b>Type</b> a phrase to Generate a Haiku!`;
+
+        
         searchBtn.classList.remove("is-loading");
         return;
     }
 
-    statusInfo.innerHTML = `Generating Haikus with: ${haikuInput.value}`
+    // Seach was sucsessful
+    statusInfo.innerHTML = `Generating Haikus with: <b>${haikuInput.value}</b>`
     
     haikuCards.length = 0;
     cardsElement.innerHTML = "";
@@ -67,6 +85,11 @@ const showHaikus = (e) =>{
     for (let i = 0; i < generationNum; i++) {
         createHaikuResults(createHaiku(syllableCount,haikuInput.value),cardsElement);
     }
+
+    // Save the current state of the app page if loading it was successful 
+    storage.saveAppState(haikuInput.value, fieldLimit.value, statusInfo.innerHTML, haikuCards); 
+    
+    
     searchBtn.classList.remove("is-loading");
 }
 
@@ -97,7 +120,7 @@ const createHaikuResults = (haiku, element) => {
     newHaiku.dataset.line1 = splitHaiku[0];
     newHaiku.dataset.line2 = splitHaiku[1];
     newHaiku.dataset.line3 = splitHaiku[2];
-    newHaiku.dataset.addedToFavorites = false;
+    newHaiku.dataset.addedToFavorites = storage.findHaikuInFav(splitHaiku[0], splitHaiku[1], splitHaiku[2]);
     newHaiku.callback = addToFavorites; 
     element.appendChild(newHaiku);
 }
@@ -133,6 +156,7 @@ function createHaiku(sylArray,input)
     
 }
 
+// Generate one of the three lines
 function generateLine(addedPhrase, totalSyllable){
 
     let returnedLine = addedPhrase;
