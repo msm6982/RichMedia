@@ -7,7 +7,9 @@ let cardsElement = null;
 
 const init = () =>{
     cardsElement = document.querySelector("#element-card-holder");
-    console.log(creation.createHaikuResults(creation.createHaiku("",""),cardsElement));
+    cardsElement.innerHTML = "";
+    creation.createHaikuResults(creation.createHaiku("",""),cardsElement)
+    //console.log();
 }
 
 init();

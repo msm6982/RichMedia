@@ -52,13 +52,15 @@ const defaultData = {
   }
 
   // Check if a haikus is in the favorites
-  export const findHaikuInFav = (line1, line2, line3) =>
+  export const findHaikuInFav = (haiku) =>
   {
-    return readLocalStorage().haikus.includes({
-      "line1" : line1,
-      "line2" : line2,
-      "line3" : line3,
-      });
+    if (readLocalStorage().haikus.find(h => `${h.line1}` == `${haiku.line1}`)) {
+      return true;
+    }
+
+    return false;
+    //let returnedBool = readLocalStorage().haikus.includes(haiku);
+    return returnedBool;
   }
 
   export const addFavorite = (str) => {
@@ -93,3 +95,15 @@ const defaultData = {
     writeLocalStorage(allValues);
   };
   
+  // Just clear the local changes made to the app page
+  export const clearAppChanges = () => {
+    const allValues = readLocalStorage();
+    
+    allValues.savedSearch = defaultData.savedSearch;
+    allValues.numeralInput = defaultData.numeralInput;
+    allValues.recentlySearchedHaikus = defaultData.recentlySearchedHaikus;
+    allValues.uiState = defaultData.uiState;
+
+    writeLocalStorage(allValues);
+
+  }

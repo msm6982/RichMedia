@@ -7,7 +7,8 @@ let fieldLimit = null,
     haikuInput = null,
     cardsElement = null,
     searchBtn = null,
-    statusInfo = null;
+    statusInfo = null,
+    clearAppPage = null;
 let generationNum = 1;
 let syllableCount = 0;
 
@@ -18,31 +19,44 @@ const init = () =>{
     fieldLimit = document.querySelector("#field-limit");
     haikuInput = document.querySelector("#haiku-input");
     cardsElement = document.querySelector("#element-card-holder");
+    clearAppPage = document.querySelector("#btn-clear-all");
     searchBtn = document.querySelector("#btn-search");
     statusInfo = document.querySelector("#element-status");
 
     // Insert the locally saved search changes
     //console.log(storage.getSavedNumeralInput());
     //fieldLimit.target.value = parseInt(storage.getSavedNumeralInput());
-    haikuInput.value = storage.getSavedSearch();
-    statusInfo.innerHTML = storage.getSavedUI();
+    if (haikuInput != null) haikuInput.value = storage.getSavedSearch();
+    if (statusInfo != null) statusInfo.innerHTML = storage.getSavedUI();
     
     
-    generationNum = fieldLimit.value;
+    if(fieldLimit != null) generationNum = fieldLimit.value;
 
     // Insert the last search term's saved haikus
-    let savedHaikus = storage.getRecentlySearchedHaikus();
-    for (let i = 0; i < savedHaikus.length; i++) {
-        createHaikuResults(savedHaikus[i]);
+    // onnly on the app page
+    if (haikuInput != null)
+    {
+        let savedHaikus = storage.getRecentlySearchedHaikus();
+        for (let i = 0; i < savedHaikus.length; i++) {
+            createHaikuResults(savedHaikus[i],cardsElement);
+        }
     }
 
+    // Clear local app settings but not the favorites
+    if(clearAppPage != null) clearAppPage.onclick = (e) => {
+        storage.clearAppChanges();
+        haikuInput.value = storage.getSavedSearch();
+        cardsElement.innerHTML = "";
+        statusInfo.innerHTML = "Cleared the App Page!";
+        haikuCards.length = 0;
+    }
 
-    fieldLimit.onchange = (e) => {
+    if(fieldLimit != null) fieldLimit.onchange = (e) => {
         generationNum = e.target.value;
         //console.log(generationNum);
     };
 
-    searchBtn.onclick = (e) =>{
+    if(searchBtn != null) searchBtn.onclick = (e) =>{
         e.target.classList.add("is-loading");
         showSearchResult();
         
@@ -59,7 +73,7 @@ const showSearchResult = (e) =>{
 
     // Multi-Splitting of strings removes any extra spacing at first, and then the dashs 
     // The ammount of spits form dashes determine the number of stressed syllables  
-    syllableCount = RiTa.syllables(`${haikuInput.value}`).split(" ").join(",").split("/").join(",").split(",").filter(words => words.length > 0)
+    syllableCount = RiTa.syllables(`${haikuInput.value}`).split(" ").join(",").split("/").join(",").split(",").filter(words => words.length > 0);
     
     // Don't compete a search if what whas seached goes against the formating of a haiku
     let tooManySyl = syllableCount.length > 7;
@@ -81,6 +95,7 @@ const showSearchResult = (e) =>{
     
     haikuCards.length = 0;
     cardsElement.innerHTML = "";
+    generationNum = fieldLimit.value;
 
     for (let i = 0; i < generationNum; i++) {
         createHaikuResults(createHaiku(syllableCount,haikuInput.value),cardsElement);
@@ -120,7 +135,10 @@ const createHaikuResults = (haiku, element) => {
     newHaiku.dataset.line1 = splitHaiku[0];
     newHaiku.dataset.line2 = splitHaiku[1];
     newHaiku.dataset.line3 = splitHaiku[2];
-    newHaiku.dataset.addedToFavorites = storage.findHaikuInFav(splitHaiku[0], splitHaiku[1], splitHaiku[2]);
+    const haikuObj = { "line1" : `${splitHaiku[0]}`,
+    "line2" : `${splitHaiku[1]}`,
+    "line3" : `${splitHaiku[2]}`};
+    newHaiku.dataset.addedToFavorites = storage.findHaikuInFav(haikuObj);
     newHaiku.callback = addToFavorites; 
     element.appendChild(newHaiku);
 }
