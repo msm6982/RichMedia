@@ -4,12 +4,15 @@ import * as firebase from "./firebase.js";
 
 
 let listFavorites = null,
-    cardsElement = null;
+    cardsElement = null,
+    cardsStatus = null
+    ;
+
 
 
 const showFavorites = () =>{
     const favorites = storage.getFavorites();
-    document.querySelector("#element-status").innerHTML = (favorites.length > 0) ? "Displaying Favorites" : "No Favorites yet!";
+    cardsStatus.innerHTML = (favorites.length > 0) ? "Displaying Favorites" : "No Favorites yet!";
     
     for (const f of favorites) {
         const newHaiku = document.createElement("haiku-card");
@@ -17,29 +20,60 @@ const showFavorites = () =>{
         newHaiku.dataset.line2 = f.line2;
         newHaiku.dataset.line3 = f.line3;
         newHaiku.dataset.addedToFavorites = true;
+        newHaiku.callback = (function() {
+            //let dataObj = null;
+            removeFromFavorites( {
+                "line1" : newHaiku.dataset.line1,
+                "line2" : newHaiku.dataset.line2,
+                "line3" : newHaiku.dataset.line3,
+            });
+            newHaiku.callback = newHaiku.remove();
+        }) ;
+        
         cardsElement.appendChild(newHaiku);
     }
     
 } 
 
+const removeFromFavorites = (haikuObj) => {
+    
+    firebase.pushLikedHaikusToCloud(haikuObj, -1);
+    storage.removeFavorite(haikuObj);
+    //console.log("removing from favorite");
+    if (storage.getFavorites().length <= 0) cardsStatus.innerHTML = "All favorites cleared! Add some more!";
+}
+
 const clearFavorites = () =>{
+    const favorites = storage.getFavorites();
+    cardsStatus.innerHTML = "Cleared Favorites";
+
+    for (const f of favorites) {
+        removeFromFavorites({ 
+        "line1" : f.line1,
+        "line2" : f.line2,
+        "line3" : f.line3,
+        });
+    }
     cardsElement.innerHTML = "";
     storage.clearFavorites();
-    showFavorites();
+    //showFavorites();
 }
 
 const init = () =>{
     cardsElement = document.querySelector("#element-card-holder");
-    document.querySelector("#element-status")
+    cardsStatus = document.querySelector("#element-status");
     showFavorites();
 
     document.querySelector("#clear-btn").onclick = () => {
         clearFavorites();
     }
 
+    
     window.onfocus = () => {
+        cardsElement.innerHTML = "";
         showFavorites();
        };
+    
 }
 
 window.onload = init;

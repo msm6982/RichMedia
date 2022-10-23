@@ -65,7 +65,7 @@ const showHaikus = (e) =>{
     cardsElement.innerHTML = "";
 
     for (let i = 0; i < generationNum; i++) {
-        createHaikuResults(createHaiku());
+        createHaikuResults(createHaiku(syllableCount,haikuInput.value),cardsElement);
     }
     searchBtn.classList.remove("is-loading");
 }
@@ -90,7 +90,7 @@ const addToFavorites = (haikuObj) => {
 
 
 
-const createHaikuResults = (haiku) => {
+const createHaikuResults = (haiku, element) => {
     haikuCards.push(haiku);
     let splitHaiku = haiku.split(".");
     const newHaiku = document.createElement("haiku-card");
@@ -99,12 +99,12 @@ const createHaikuResults = (haiku) => {
     newHaiku.dataset.line3 = splitHaiku[2];
     newHaiku.dataset.addedToFavorites = false;
     newHaiku.callback = addToFavorites; 
-    cardsElement.appendChild(newHaiku);
+    element.appendChild(newHaiku);
 }
 
+export {createHaikuResults, createHaiku};
 
-
-function createHaiku()
+function createHaiku(sylArray,input)
 {
     let generatedHaiku = []; 
 
@@ -112,12 +112,12 @@ function createHaiku()
     let phrasePos = Math.floor(Math.random() * 3);
     
     // 7 syllable line
-    if(syllableCount.length>5) phrasePos = 1;
+    if(sylArray.length>5) phrasePos = 1;
 
     // Generate each line individually
     for (let j = 0; j < 3; j++) {
         // Add the phrase to the list on the random
-        let addedPhrase = (j==phrasePos) ? haikuInput.value.trim() : "";
+        let addedPhrase = (j==phrasePos) ? input.trim() : "";
         let syllablePerLine = (j==1) ? 7 : 5;
         if(generatedHaiku.length == 0)
         {

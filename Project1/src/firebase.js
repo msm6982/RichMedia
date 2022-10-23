@@ -27,7 +27,7 @@ const pushLikedHaikusToCloud = (haiku,incrementVal) => {
     line2 : haiku.line2,
     line3 : haiku.line3,
     likes: increment(incrementVal)
-  }); // `dog` is an object with `.title`, `.url`, `.likes` properties etc
+  });
 };
 
 const favoritesChanged = (snapshot) => {
