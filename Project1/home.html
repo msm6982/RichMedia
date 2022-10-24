@@ -10,43 +10,50 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://unpkg.com/rita"></script>
+  
   <script src="src/loader.js" type="module"></script>
   <script src="./src/home.js" type="module"></script>
+
+  <style>
+    
+    #content-holder{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(200px,.8fr));
+      align-items: center;
+      grid-gap: 1em;
+    }
+
+    #element-card-holder {
+    display: grid;
+      grid-template-columns: repeat(3, minmax(200px,1fr));
+      
+      grid-gap: 0.5em;
+    }
+    @media only screen and (max-width: 1270px)
+    {
+      #content-holder{
+
+      grid-template-columns: repeat(auto-fill, minmax(375px,1fr));
+      
+
+    }
+
+    #element-card-holder {
+
+      grid-template-columns: repeat(auto-fill, minmax(250px,.8fr));
+
+    }
+    }
+   
+    
+   
+  </style>
+
 </head>
 <body>
-  <nav class="navbar has-shadow is-white">
-    <!-- log / brand -->
-    <div class="navbar-brand">
-      <a class="navbar-item" href="home.html">
-        <i class="fas fa-solid fa-feather"></i>
-      </a>
-      <a class="navbar-burger" id="burger">
-        <span></span>
-        <span></span>
-        <span></span>
-      </a>
-    </div>
-    
-
-    <div class="navbar-menu" id="nav-links">
-      <div class="navbar-start">
-        <span class="navbar-item is-hoverable has-text-weight-bold">Home</span>
-
-        <a class="navbar-item is-hoverable" href="app.html">
-          App
-        </a>
-      
-        <a class="navbar-item is-hoverable" href="favorites.html">
-          Favorites
-        </a>
-      
-        <a class="navbar-item is-hoverable" href="documentation.html">
-          Documentation
-        </a>
-      </div> <!-- end navbar-start -->
-    </div>
-  </nav>
-
+  
+  <nav-bar data-currentpage = "home"></nav-bar>
+  
   <!-- product info -->
   
     
@@ -58,11 +65,20 @@
               Save them for people to see!<br>
               Embrace Randomness!"></haiku-title>
             
-              <img class="p-3" style="float:right;width:50%" src="./images/haiku.jpg" alt="dog">
             </div>
-            <div id="element-card-holder">
-              <!-- Search results go here! -->
+            
+            <br>
+
+            <div id="content-holder">
+            <div id="cards">
+              <p class="is-size-4 mb-4 has-text-centered">Here are some generated example Haikus!</p>
+              <div id="element-card-holder">
+                <!-- Search results go here! -->
+              </div>
             </div>
+              <img class="p-3" src="./images/haiku.jpg" alt="page illistration">
+            </div>
+            <p class="is-small">Image Source: <a href="https://www.grammarly.com/blog/how-to-write-haiku/">Grammarly</a></p>
             <haiku-footer data-footer="msm6982@rit.edu Updated 2022"></haiku-footer>
           </div>
         </div>

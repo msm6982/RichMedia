@@ -1,6 +1,6 @@
 import "./haiku-card.js";
 import * as storage from "./local-storage.js";
-import * as firebase from "./firebase.js";
+import * as firebase from "./community.js";
 
 
 let listFavorites = null,
@@ -9,7 +9,7 @@ let listFavorites = null,
     ;
 
 
-
+// Create Haiku Cards to show all the local favorites
 const showFavorites = () =>{
     const favorites = storage.getFavorites();
     cardsStatus.innerHTML = (favorites.length > 0) ? "Displaying Favorites" : "No Favorites yet!";
@@ -35,6 +35,7 @@ const showFavorites = () =>{
     
 } 
 
+// Callback function for when a favorite is removed, remove the card 
 const removeFromFavorites = (haikuObj) => {
     
     firebase.pushLikedHaikusToCloud(haikuObj, -1);
@@ -43,6 +44,7 @@ const removeFromFavorites = (haikuObj) => {
     if (storage.getFavorites().length <= 0) cardsStatus.innerHTML = "All favorites cleared! Add some more!";
 }
 
+// Clear the locally favorited Haikus
 const clearFavorites = () =>{
     const favorites = storage.getFavorites();
     cardsStatus.innerHTML = "Cleared Favorites";
@@ -59,6 +61,7 @@ const clearFavorites = () =>{
     //showFavorites();
 }
 
+// Init show the favorites on load
 const init = () =>{
     cardsElement = document.querySelector("#element-card-holder");
     cardsStatus = document.querySelector("#element-status");

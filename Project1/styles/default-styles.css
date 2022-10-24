@@ -3,3 +3,9 @@
 ol{
   list-style-position: inside;
 }
+
+#element-card-holder, #community-card-holder{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+  grid-gap: 0.5em;
+}

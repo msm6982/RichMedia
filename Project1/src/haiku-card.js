@@ -19,14 +19,16 @@ template.innerHTML = `
 
     <!-- favorites -->
     <br>
-    <div class="control has-text-centered">
-    <button id="fav-btn" class="button is-primary is-small" title="Favorite this Haiku!">Favorite!</button>
+    <div class= "control has-text-centered">
+    <button id="fav-btn" class="button is-primary is-medium" title="Favorite this Haiku!">Favorite!</button>
+    <p id = "likes-counter" class = "is-size-5 mt-2"></p>
     </div>
 </div>
 
 
 `;
 
+// Haiku Card, what's displayed for home, app, favorites, and community
 class HaikuResultsCard extends HTMLElement{
   constructor () {
     super();
@@ -40,28 +42,26 @@ class HaikuResultsCard extends HTMLElement{
     this.shadowRoot.querySelector("#line2").innerHTML = this.dataset.line2;
     this.shadowRoot.querySelector("#line3").innerHTML = this.dataset.line3;
 
+    this.shadowRoot.querySelector("#likes-counter").innerHTML = (this.dataset.likes != null) ? `Total Likes: ${this.dataset.likes}` : "";
+    
+
     this.btnFavorite = this.shadowRoot.querySelector("#fav-btn");
     this.callback = this.callback || ((obj) => console.log(`Haiku Line1: ${obj.line1}, Line2: ${obj.line2}, Line3: ${obj.line3}`));
     this.setButtonStyle();
     
+    
+    // Returns object from connected callback
     this.btnFavorite.onclick = (e) => {
       // Add to favorites 
       this.dataset.addedToFavorites = (this.dataset.addedToFavorites == "false") ?  true : false;
       
-      /*
-      if(this.dataset.addedToFavorites == "false"){
-        
-        this.dataset.addedToFavorites = true;
-        this.setButtonStyle();
-      }
-      // Remove from favorites
-      else {
-        this.dataset.addedToFavorites = false;
-        
-       
-      }
-      */
       this.setButtonStyle();
+      // Update the likes of the card if the button was pushed
+      if (this.dataset.likes != null)
+      {
+        (this.dataset.addedToFavorites == "false") ? this.dataset.likes-- : this.dataset.likes++;
+        this.shadowRoot.querySelector("#likes-counter").innerHTML = `Total Likes: ${this.dataset.likes}`;
+      }
       const dataObj = {
       "line1" : this.dataset.line1,
       "line2" : this.dataset.line2,
@@ -73,25 +73,34 @@ class HaikuResultsCard extends HTMLElement{
     };
   }
 
+  // Update the botton's style on favorite and unfavorite
   setButtonStyle() {
     this.dataset.addedToFavorites == "false" ? this.unFavoritedHaikuBtn() : this.favoritedHaikuBtn();
   }
 
+  // Toggle favorited
   favoritedHaikuBtn() {
     this.btnFavorite.innerHTML = "Favorited!"
-    this.btnFavorite.classList.remove('is-primary');
-    this.btnFavorite.classList.add('is-warning');
+    this.btnFavorite.classList.remove("is-outlined");
+    //this.btnFavorite.classList.remove('is-primary');
+    //this.btnFavorite.classList.add('is-warning');
+
+    
   }
 
+  // Un favorite
   unFavoritedHaikuBtn() {
     this.btnFavorite.innerHTML = "Favorite!"
-    this.btnFavorite.classList.remove('is-warning');
-    this.btnFavorite.classList.add('is-primary');
+    this.btnFavorite.classList.add("is-outlined");
+    //this.btnFavorite.classList.remove('is-warning');
+    //this.btnFavorite.classList.add('is-primary');
   }
   
 
   disconnectedCallback(){
     this.btnFavorite.onclick = null;
+    this.btnFavorite.onmouseover = null;
+    this.btnFavorite.onmouseout = null;
   }
 }
 

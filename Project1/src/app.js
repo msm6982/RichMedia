@@ -1,7 +1,7 @@
 const haikuCards = []; 
 import "./haiku-card.js";
 import * as storage from "./local-storage.js";
-import * as firebase from "./firebase.js";
+import * as firebase from "./community.js";
 
 let fieldLimit = null,
     haikuInput = null,
@@ -12,6 +12,7 @@ let fieldLimit = null,
 let generationNum = 1;
 let syllableCount = 0;
 
+// Inalize app page, fill in local storarge to their respective seach fields
 const init = () =>{
 
     //storage.clearLocalStorage();
@@ -37,9 +38,13 @@ const init = () =>{
     if (haikuInput != null)
     {
         let savedHaikus = storage.getRecentlySearchedHaikus();
-        for (let i = 0; i < savedHaikus.length; i++) {
-            createHaikuResults(savedHaikus[i],cardsElement);
+        if(savedHaikus != null)
+        {
+            for (let i = 0; i < savedHaikus.length; i++) {
+                createHaikuResults(savedHaikus[i],cardsElement);
+            }
         }
+        
     }
 
     // Clear local app settings but not the favorites
@@ -51,11 +56,13 @@ const init = () =>{
         haikuCards.length = 0;
     }
 
+    // Change the field limit
     if(fieldLimit != null) fieldLimit.onchange = (e) => {
         generationNum = e.target.value;
         //console.log(generationNum);
     };
 
+    // Search for Haikus
     if(searchBtn != null) searchBtn.onclick = (e) =>{
         e.target.classList.add("is-loading");
         showSearchResult();
@@ -64,9 +71,8 @@ const init = () =>{
 }
 window.onload = init;
 
+// Cheks to see if a phrase is valid for a haiku and calles for the creation of it
 const showSearchResult = (e) =>{
-    
-
     // syllable count check if it's less than 7 
     // RiTa syllables returns the sring of stressed syllables in this fassion
     //console.log(RiTa.syllables("very")) = v-eh/r-iy
@@ -108,8 +114,9 @@ const showSearchResult = (e) =>{
     searchBtn.classList.remove("is-loading");
 }
 
+// Helper fuction that is called to toggle favoriting and unfavoriting
 const addToFavorites = (haikuObj) => {
-    console.log(haikuObj);
+    //console.log(haikuObj);
     
     if(haikuObj.addedToFavorites == 'true')
     {
@@ -127,7 +134,7 @@ const addToFavorites = (haikuObj) => {
 }
 
 
-
+// Create a Haiku Card and add callback to push it to local and community favorites 
 const createHaikuResults = (haiku, element) => {
     haikuCards.push(haiku);
     let splitHaiku = haiku.split(".");
@@ -145,6 +152,7 @@ const createHaikuResults = (haiku, element) => {
 
 export {createHaikuResults, createHaiku};
 
+// Create a complete Haiku based on inputed value
 function createHaiku(sylArray,input)
 {
     let generatedHaiku = []; 
@@ -174,7 +182,7 @@ function createHaiku(sylArray,input)
     
 }
 
-// Generate one of the three lines
+// Generate one of the three lines haiku lines
 function generateLine(addedPhrase, totalSyllable){
 
     let returnedLine = addedPhrase;

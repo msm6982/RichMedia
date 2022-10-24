@@ -1,4 +1,6 @@
-/* Checked by ESLint - https://eslint.org/demo */
+
+
+// Default data for local storage
 const defaultData = {
     "haikus": [],
     // Saved search terms from app page
@@ -9,6 +11,7 @@ const defaultData = {
   },
   storeName = "msm6982-p1-settings"; 
   
+  // Parse and return local storage
   const readLocalStorage = () => {
     let allValues = null;
   
@@ -22,6 +25,7 @@ const defaultData = {
     return allValues;
   };
   
+  // Write all passed data to the local 
   const writeLocalStorage = (allValues) => {
     localStorage.setItem(storeName, JSON.stringify(allValues));
   };
@@ -42,11 +46,10 @@ const defaultData = {
     writeLocalStorage(allValues);
   }
   
-
+  // Remove a unfavored array, bit bugged in current itteration
   export const removeFavorite = (str) => {
     const allValues = readLocalStorage();
-
-    allValues.haikus.pop();
+    (findHaikuInFav(str)) ? allValues.haikus.splice(allValues.haikus.indexOf(str),1) : this.return;
     
     writeLocalStorage(allValues);
   }
@@ -59,10 +62,9 @@ const defaultData = {
     }
 
     return false;
-    //let returnedBool = readLocalStorage().haikus.includes(haiku);
-    return returnedBool;
   }
 
+  // Add a favored Array
   export const addFavorite = (str) => {
     const allValues = readLocalStorage();
     const haikuObj = {

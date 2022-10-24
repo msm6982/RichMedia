@@ -11,61 +11,33 @@
   <link rel="stylesheet" href="styles/default-styles.css">
   <script src="./src/loader.js" type="module"></script>
   <script src="./src/favorites.js" type="module"></script>
+
 </head>
 <body>
-  <nav class="navbar has-shadow is-white">
-    <!-- log / brand -->
-    <div class="navbar-brand">
-      <a class="navbar-item" href="home.html">
-        <i class="fas fa-solid fa-feather"></i>
-      </a>
-      <a class="navbar-burger" id="burger">
-        <span></span>
-        <span></span>
-        <span></span>
-      </a>
-    </div>
-    
-
-    <div class="navbar-menu" id="nav-links">
-      <div class="navbar-start">
-        <a class="navbar-item is-hoverable " href="home.html">
-          Home
-        </a>
-
-        <a class="navbar-item is-hoverable" href="app.html">
-          App
-        </a>
-      
-        <span class="navbar-item is-hoverable has-text-weight-bold">Favorites</span>
-      
-        <a class="navbar-item is-hoverable" href="documentation.html">
-          Documentation
-        </a>
-      </div> <!-- end navbar-start -->
-    </div>
-  </nav>
+  <nav-bar data-currentpage = "favorites"></nav-bar>
 
 <!-- Main Page -->
 <main class="px-1 py-1">
   <div class="has-background-info mr-1 p-1"> 
     <div class="is-large p-4">
       <!-- Row #1 -->
-      <div class="has-text-light"><haiku-title data-title="Haiku Favorites" data-subtitle="Checkout your favorite Haikus below!"></haiku-title></div>
+      <div class="columns is-multiline is-vcentered m-2">
+        <div class="has-text-light column is-narrow"><haiku-title data-title="Haiku Favorites" data-subtitle="Checkout your favorite Haikus below!"></haiku-title></div>
       
-      <div class="control is-inline-block ml-6">
-        <button
-        id="clear-btn"
-        class="button is-warning is-medium"
-        title="Clear all Favorites!">
-        Clear All Favorites!
-        </button>
+        <div class="control column is-narrow">
+          <button
+          id="clear-btn"
+          class="button is-warning is-medium"
+          title="Clear all Favorites!">
+            Clear All Favorites!
+          </button>
+        </div>
       </div>
 
       <!-- Row #3 -->
       <div class="box has-background-info-dark"> 
         <div class="is-large p-1">
-          <p id="element-status" class="has-text-warning mb-2">No favorites yet</p>
+          <p id="element-status" class="has-text-warning mb-2 is-size-4">No favorites yet</p>
           <div id="element-card-holder">
             <!-- Favorites go here! -->
           </div>
@@ -76,6 +48,5 @@
   </div>
 </main>
 
-  <script src="src/index.js"></script>
 </body>
 </html>

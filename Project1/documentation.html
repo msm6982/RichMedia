@@ -10,40 +10,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="styles/default-styles.css">
   <script src="src/loader.js" type="module"></script>
+
+  
 </head>
 <body>
-  <nav class="navbar has-shadow is-white">
-    <!-- log / brand -->
-    <div class="navbar-brand">
-      <a class="navbar-item" href="home.html">
-        <i class="fas fa-solid fa-feather"></i>
-      </a>
-      <a class="navbar-burger" id="burger">
-        <span></span>
-        <span></span>
-        <span></span>
-      </a>
-    </div>
-    
-
-    <div class="navbar-menu" id="nav-links">
-      <div class="navbar-start">
-        <a class="navbar-item is-hoverable " href="home.html">
-          Home
-        </a>
-
-        <a class="navbar-item is-hoverable" href="app.html">
-          App
-        </a>
-      
-        <a class="navbar-item is-hoverable" href="favorites.html">
-          Favorites
-        </a>
-      
-        <span class="navbar-item is-hoverable has-text-weight-bold">Documentation</span>
-      </div> <!-- end navbar-start -->
-    </div>
-  </nav>
+  <nav-bar data-currentpage = "documentation"></nav-bar>
 
 <!-- Main Page -->
 <main class="px-1 py-1">
@@ -56,9 +27,9 @@
       <!-- Row #2  -->
       <div class="box mt-2">
         <img src="./images/rough-sketch.jpg" style="width:30%" alt="rough notebook sketch of app UI">
-        <li>This app would allow users to generate Haiku based on user input, the user can input a single word or phrase, a maximum of 7 syllables, and the user will be able to generate a number of random Haikus, that the user also decides, that will contain the phrase or word. <br>
+        <p>This app would allow users to generate Haiku based on user input, the user can input a single word or phrase, a maximum of 7 syllables, and the user will be able to generate a number of random Haikus, that the user also decides, that will contain the phrase or word. <br>
           Users then have the option then save their generated Haikus, posting them to a community page where users can like each other's Haikus. This will be a fun tool for creative writing enthusiasts and can spark inspiration based on the random nature of the generation around a single subject.<br>
-          I will be using RiTa.js  and Firebase as my primary web services to make the app possible </li>
+          I will be using RiTa.js  and Firebase as my primary web services to make the app possible </p>
 
       
         <h2 class="subtitle has-text-weight-bold mb-0">Project Req</h2>
@@ -69,6 +40,8 @@
         <ol>
           <li>Haiku Image Source: <a href="https://www.grammarly.com/blog/how-to-write-haiku/">Grammarly</a></li>       
           <li>Stack Overflow : <a href="https://stackoverflow.com/questions/650022/how-do-i-split-a-string-with-multiple-separators-in-javascript">Stack Overflow - Multistring Split</a></li>
+          <li>Stack Overflow : <a href="https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array">Stack Overflow - Randomly Shuffling Array</a></li>
+          <li> W3 Schools: <a href="https://www.w3schools.com/jsref/jsref_includes.asp">W3 Schools - Array Includes</a></li>
           <li>Bulma : <a href="https://bulma.io/">Documentation</a></li>
         </ol>
         <h2 class="subtitle has-text-weight-bold mb-0">APIs</h2>
@@ -78,15 +51,26 @@
         </ol>
         <h2 class="subtitle has-text-weight-bold mb-0">Noteworthy</h2>
         <ol>
-          <li>To Be Added!</li>
+          <li>I really poured my effort into nearly every aspect of the project, especially with haiku generation</li>
+          <li>I greatly make use of the web components so that they're callback and input are dynamic base on the page they're used in</li>
+          <li>I also opted to toggle on and off favoriting buttons, which goes beyond the expectation of toggling being turned off after selection, unfortunately this is feature is slightly buggey but only slightly</li>
+          <li>Making the app mobile friendly was a frequent consideration for the project</li>
+          <li>Again wanted to highlight the random haiku generation using Rita, it's the aspect of the project I spent the most time getting right and it very much payed off</li>
+          <li>Users will be prompted if they submit too many syllables, random placement works for the Haiku are implemented while retaining the structure</li>
+          <li>I have yet to find a bug that is not cause by me, rather the Rita library in the current iteration of haiku spawning, the library doesn't have direct syllable count it's something I had to parse and it's done correctly consider the rita's own parsing of syllables</li>
         </ol>
         <h2 class="subtitle has-text-weight-bold mb-0">Grading</h2>
         <ol>
-          <li>To Be Added!</li>
+          <li>Going through the grading rubric I believe that my overall grade should be 95 at most and 85 at least, leaning more towards 90s, I mention this again but my project has all the required functionality</li>
+          <li>It goes above and beyond with the control and background generation to make the project truly unique and visual</li>
+          <li>I am prone to careless errors so that is why I take a few points off to be realistic, and my styling isn't particularly amazing however it is mobile friendly, my impact in features and functionality should make up for any larger issues with impact</li>
         </ol>
         <h2 class="subtitle has-text-weight-bold mb-0">To-Do</h2>
         <ol>
-          <li>To Be Added!</li>
+          <li>Dedicate a bit more time making the styling more unique: many elements are based on dogfinder as I was more primary focusing on functionality for the project. Web styling is ultimately my kryptonite so more time is need when I can afford it </li>
+          <li>Iron out the bugs with the toggling Haiku card button: It's a bug that I unfortunately noticed too late as it flew over my head for a while, I quickly implemented a solution that should work for it but it's inconsistent so more reascuse will be need to be dont on removing array elements</li>
+          <li>Fix any errors from P1 feedback: bit cliche but i honestly don't see too many issues with the project, but I am prone to careless mistakes so I expect at least one will slip through</li>
+
         </ol>
 
       </div>

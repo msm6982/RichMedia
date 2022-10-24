@@ -1,10 +1,11 @@
 const template = document.createElement("template");
 template.innerHTML = `
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-<p class="title">PlaceHolderTitle</p>
-<p class="subtitle">PlaceholderSubtitle</p>
+<p class="title m-1 has-text-white has-text-weight-bold">PlaceHolderTitle</p>
+<p class="subtitle m-1 has-text-white">PlaceholderSubtitle</p>
 `;
 
+// Title Web componet for title/header text on pages
 class HaikuTitle extends HTMLElement{
     constructor(){
         super();
