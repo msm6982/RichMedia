@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>First Canvas</title>
+	<style>
+	canvas{
+		border:1px solid gray;
+	}
+    
+    body{
+        font-family: sans-serif;
+    }
+	
+    button{
+        font-size:1.2em;
+    }
+	
+    section{
+        margin:.5em 0 .5em 0;
+    }
+
+	</style>
+	<script>
+		// #0 - in this class we will always use ECMAScript 5's "strict" mode
+		// See what 'use strict' does here:
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode
+		"use strict";
+        let ctx;
+        let paused = false;
+        let canvas;
+        let checkedRect = true;
+        let checkLine = true;
+        let checkArc = true;
+        let screenWitdh = 640;
+        let screenHeight = 480;
+		
+		// #1 call the `init` function after the pages loads
+		window.onload = init; 
+	
+		function init(){
+			console.log("page loaded!");
+			// #2 Now that the page has loaded, start drawing!
+			
+			// A - `canvas` variable points at <canvas> tag
+			canvas = document.querySelector("canvas");
+			
+			// B - the `ctx` variable points at a "2D drawing context"
+			ctx = canvas.getContext("2d");
+			
+
+            // Part 3
+            setupUI();
+
+            update();
+		}
+
+       // Event Handler
+        function canvasClicked(e){
+            let rect = e.target.getBoundingClientRect();
+            let mouseX = e.clientX - rect.x;
+            let mouseY = e.clientY - rect.y;
+            console.log(mouseX,mouseY);
+            // Fill Radom Arcs
+            for (let i = 0; i < 10; i++) {
+                let x = getRandomInt(-100,100) + mouseX;
+                let y = getRandomInt(-100,100) + mouseY;
+                let width = getRandomInt(0, screenWitdh);
+                let height = getRandomInt(0, screenHeight);
+                let radius = getRandomInt(1,screenHeight/2);
+                let startAngle =  Math.random() * (Math.PI * 2);
+                let endAngle =  Math.random() * (Math.PI * 2);
+                let fillStyle = getRandomColor(); 
+                let strokeStyle = getRandomColor();
+                let lineWidth = getRandomInt(0,30);
+                let fill = (Math.random() <= 0.5) ? true : false;
+                //drawRect(ctx,x,y,width,height,fillStyle, lineWidth,strokeStyle, fill);
+                drawArc(ctx,x,y,radius,startAngle,endAngle,fillStyle,lineWidth,strokeStyle,fill);
+            }
+        }   
+
+        function setupUI(){
+            document.querySelector("#btnPause").onclick = function(){
+                paused = true;
+            };
+
+            document.querySelector("#btnPlay").onclick = function(){
+                if(paused){
+                    paused = false;
+                    update();                  
+                }
+            };
+
+            document.querySelector("#btnClear").onclick = function(){
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            };
+
+            canvas.onclick = canvasClicked
+
+            document.querySelector("#cbRectangles").onclick = function(e) {
+                checkedRect = e.target.checked;
+            }
+
+            document.querySelector("#cbArcs").onclick = function(e) {
+                checkArc = e.target.checked;
+            }
+
+            document.querySelector("#cbLines").onclick = function(e) {
+                checkLine = e.target.checked;
+            }
+        }
+
+        // handy helper functions!
+function getRandomColor(){
+    function getByte(){ return 55 + Math.round(Math.random() * 200); }
+            return "rgba(" + getByte() + "," + getByte() + "," + getByte() + ",.8)";
+        }
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+
+function update(){
+    if(paused) return;
+    requestAnimationFrame(update);
+    let radom = getRandomInt(0,2);
+    if(checkedRect && radom == 0) drawRandomRect(ctx);
+    if(checkArc && radom == 1) drawRandomArc(ctx);
+    if(checkLine && radom == 0) drawRandomLine(ctx);
+}
+
+function drawArc(ctx, x, y, radius, startAngle = 0, endAngle = Math.PI * 2, fillStyle = "black", lineWidth = 0, strokeStyle ="black", fill = true){
+    ctx.save();
+    ctx.fillStyle = fillStyle;
+    ctx.beginPath();
+
+    ctx.arc(x,y, radius, startAngle, endAngle);
+
+    
+    // Fill rect
+    if (fill) ctx.fill();
+    // Add Line width
+    if(lineWidth > 0){
+        ctx.lineWidth = lineWidth
+        ctx.strokeStyle = strokeStyle;
+        ctx.stroke();
+    }
+    ctx.closePath();
+    ctx.restore();
+
+}
+
+function drawRect(ctx, x, y, width, height, fillStyle = "black", lineWidth = 0, strokeStyle ="black", fill = true){
+    ctx.save();
+    ctx.fillStyle = fillStyle;
+    ctx.beginPath();
+
+    ctx.rect(x,y,width,height);
+    
+    
+    // Fill arc
+    if (fill) ctx.fill();
+    // Add Line width
+    if(lineWidth > 0){
+        ctx.lineWidth = lineWidth
+        ctx.strokeStyle = strokeStyle;
+        ctx.stroke();
+    }
+    ctx.closePath();
+    ctx.restore();
+}
+
+function drawLine(ctx, x1, y1, x2, y2, lineWidth = 1, strokeStyle ="black")
+{
+    ctx.save();
+    ctx.beginPath();
+
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+    
+    // Add Line width
+
+        ctx.lineWidth = lineWidth
+        ctx.strokeStyle = strokeStyle;
+        ctx.stroke();
+
+    ctx.closePath();
+    ctx.restore();
+}
+
+function drawRandomArc(ctx)
+{
+    // 50% to fill it
+    let fill = (Math.random() <= 0.5) ? true : false;  
+    drawArc(ctx, getRandomInt(1,screenWitdh), getRandomInt(1,screenHeight), getRandomInt(1,screenHeight/2), Math.random() * (Math.PI * 2), Math.random() * (Math.PI * 2), getRandomColor(), getRandomInt(1,30), getRandomColor(), fill);
+    
+}
+
+function drawRandomRect(ctx)
+{
+    // 50% to fill it
+    let fill = (Math.random() <= 0.5) ? true : false; 
+    drawRect(ctx, getRandomInt(1,screenWitdh/2), getRandomInt(1,screenHeight/2), getRandomInt(0,screenWitdh), getRandomInt(0,screenHeight), getRandomColor(), getRandomInt(1,30), getRandomColor(), fill); 
+
+}
+
+function drawRandomLine(ctx)
+{
+    drawLine(ctx, getRandomInt(0,screenWitdh), getRandomInt(0,screenHeight), getRandomInt(0,screenWitdh), getRandomInt(0,screenHeight), getRandomInt(1,30), getRandomColor())
+}
+
+    
+</script>
+</head>
+<body>
+	<canvas width="640" height="480">
+		Get a real browser!
+	</canvas>
+    <section>
+        <button id="btnPlay">Play</button>
+        <button id="btnPause">Pause</button>
+        <button id="btnClear">Clear</button>
+    </section>
+    <section>
+        <span>
+          <input type="checkbox" id="cbRectangles" checked>
+          <label for="cbRectangles">Rectangles</label>
+          <input type="checkbox" id="cbArcs" checked>
+          <label for="cbArcs">Arcs</label>
+          <input type="checkbox" id="cbLines" checked>
+          <label for="cbLines">Lines</label>
+        </span>
+    </section>
+    <section>
+        <p>Click on the screen to "spraypaint" arcs (you probably want the screensaver to be paused)</p>
+    </section>
+</body>
+</html>
