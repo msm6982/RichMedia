@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>First Canvas</title>
+	<style>
+	canvas{
+		border:1px solid gray;
+	}
+	</style>
+	<script>
+		// #0 - in this class we will always use ECMAScript 5's "strict" mode
+		// See what 'use strict' does here:
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode
+		"use strict";
+        let ctx;
+		
+		// #1 call the `init` function after the pages loads
+		window.onload = init; 
+	
+		function init(){
+			console.log("page loaded!");
+			// #2 Now that the page has loaded, start drawing!
+			
+			// A - `canvas` variable points at <canvas> tag
+			let canvas = document.querySelector("canvas");
+			
+			// B - the `ctx` variable points at a "2D drawing context"
+			ctx = canvas.getContext("2d");
+			
+            /*
+            // Part 1
+			// C - all fill operations are now in red
+			ctx.fillStyle = "red"; 
+			
+			// D - fill a rectangle with the current fill color
+			ctx.fillRect(20,20,600,440); 
+
+            // Second Rectangle
+            //ctx.strokeStyle = '00FF00'; Green Hex
+            //ctx.strokeStyle = '#0F0';
+            //ctx.strokeStyle = '(0,255,0,1)'
+
+
+            
+            // Second Rectangle
+            ctx.strokeStyle = 'green';
+            ctx.lineWidth = 20;
+            ctx.strokeRect(120,120,400,300);
+            
+            // Third and Forth Rect for checkoff
+            ctx.fillStyle = "yellow";
+
+            ctx.fillRect(10,10, 400, 400);
+
+            ctx.strokeStyle = "blue";
+
+            ctx.strokeRect(25, 25, 300,600);
+            
+
+            
+            // Part 2 
+
+            // Rect and fill rectangle
+            ctx.fillStyle = "blue";
+            ctx.strokeStyle = "green";
+            ctx.lineWidth = 10;
+            ctx.rect(10, 20, 150, 100);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Circle
+            ctx.beginPath();
+            ctx.fillStyle = "yellow";
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 10;
+            ctx.arc(100, 75, 50, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fill();
+            ctx.closePath();
+
+            // Semi Cicle
+            ctx.beginPath();
+            ctx.fillStyle = "pink";
+            ctx.strokeStyle = "purple";
+            ctx.lineWidth = 10;
+            ctx.arc(200, 200, 25, 0, Math.PI, false);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fill();
+
+            // Line
+            ctx.beginPath();
+            ctx.lineWidth = 20;
+            ctx.moveTo(0, 0);
+            ctx.lineTo(25, 25);
+            ctx.stroke();
+            
+            // Left Eye
+            ctx.beginPath();
+            ctx.fillStyle = "white";
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 10;
+            ctx.arc(200, 240, 50, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fill();
+            ctx.closePath();
+
+            // Right Eye
+            ctx.beginPath();
+            ctx.fillStyle = "white";
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 10;
+            ctx.arc(300, 240, 50, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fill();
+            ctx.closePath();
+
+            // End line
+            ctx.beginPath();
+            ctx.lineWidth = 20;
+            ctx.moveTo(200, 350);
+            ctx.lineTo(300, 350);
+            ctx.stroke();
+            */
+
+            // Part 3
+            update();
+		}
+
+        // handy helper functions!
+function getRandomColor(){
+    function getByte(){ return 55 + Math.round(Math.random() * 200); }
+            return "rgba(" + getByte() + "," + getByte() + "," + getByte() + ",.8)";
+        }
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+
+function update(){
+    requestAnimationFrame(update);
+    drawRandomRect(ctx);
+}
+    
+function drawRandomRect(ctx)
+{
+    // Random Color
+    console.log(ctx);
+    ctx.fillStyle = getRandomColor();
+    ctx.lineWidth = getRandomInt(1,30);
+    ctx.strokeStyle = getRandomColor();
+    let screenWitdh = 640;
+    let screenHeight = 480;
+    // 50% to spawn circle 
+    if(Math.random() <= 0.5)
+    {
+        // Radom rectangle
+        if(Math.random() <= 0.5)
+        {
+            // Random Filled Rectangle
+            ctx.fillRect(getRandomInt(1,screenWitdh/2),getRandomInt(1,screenHeight/2),getRandomInt(0,screenWitdh),getRandomInt(0,screenHeight));
+        }
+        else
+        {
+            ctx.strokeRect(getRandomInt(1,screenWitdh/2),getRandomInt(1,screenHeight/2),getRandomInt(0,screenWitdh),getRandomInt(0,screenHeight));
+        }
+    }
+    else
+    {
+        // Radom Circle 		
+	    ctx.beginPath();
+        ctx.arc(getRandomInt(1,screenWitdh),getRandomInt(1,screenHeight), getRandomInt(1,screenHeight/2), 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fill();
+        ctx.closePath();
+    } 
+
+}
+    
+	</script>
+</head>
+<body>
+	<canvas width="640" height="480">
+		Get a real browser!
+	</canvas>
+</body>
+</html>
