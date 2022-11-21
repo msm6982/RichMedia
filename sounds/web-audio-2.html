@@ -114,6 +114,7 @@
 		ctx.save();
 		ctx.fillStyle = "red";
 		ctx.translate(320,MIDDLE_Y-100);
+		//console.log(data.length);
 		for (let b of data) {
 			let percent = b/255;
 			if(percent <.02) percent = .02;
