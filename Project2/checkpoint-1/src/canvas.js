@@ -1,20 +1,16 @@
-/*
-	The purpose of this file is to take in the analyser node and a <canvas> element: 
-	  - the module will create a drawing context that points at the <canvas> 
-	  - it will store the reference to the analyser node
-	  - in draw(), it will loop through the data in the analyser node
-	  - and then draw something representative on the canvas
-	  - maybe a better name for this file/module would be *visualizer.js* ?
-*/
+// flash code starter https://codepen.io/jlong64/pen/kXRxpA
+// rain code starter https://dev.to/soorajsnblaze333/make-it-rain-in-html-canvas-1fj0
 
 import * as utils from './utils.js';
 
 
-let ctx,canvasWidth,canvasHeight,gradient,analyserNode,audioData, distanceDivider, lightningRandomness, lastFrame, totalBoltDuration, currentDurration, rainDrops, environment; // Init all objects here
+let ctx,canvasWidth,canvasHeight,gradient,analyserNode,audioData, distanceDivider, lightningRandomness, lastFrame, totalBoltDuration, currentDurration ; // Init all objects here
 
 let rainType;
 let raindropCount;
-  
+let rainDrops; 
+let environment;
+let flashOpacity = 0; 
 
 const setupCanvas = (canvasElement,analyserNodeRef) => {
 	// create drawing context
@@ -22,7 +18,7 @@ const setupCanvas = (canvasElement,analyserNodeRef) => {
 	canvasWidth = canvasElement.width;
 	canvasHeight = canvasElement.height;
 
-    distanceDivider = 5.5;
+    distanceDivider = 6;
 	// create a gradient that runs top to bottom
 	//gradient = utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"blue"},{percent:.25,color:"green"},{percent:.5,color:"yellow"},{percent:.75,color:"red"},{percent:1,color:"magenta"}]);
     gradient = utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"blue"},{percent:1,color:"magenta"}]);
@@ -60,12 +56,6 @@ const setupCanvas = (canvasElement,analyserNodeRef) => {
 
 
 
-// The screen will flash briefly when the flash opacity is set. The opacity will dissipate quickly
-// over time.
-let flashOpacity = 0.0;
-
-// When a bolt appears, it will be drawn at full opacity for the flash duration, and then will fade
-// out gradually over the fade duration.
 
 
 const draw = (params={},fps) => {
@@ -103,7 +93,7 @@ const draw = (params={},fps) => {
     
 	//console.log(audioData);
             
-    
+    // Audio Data, analyising beat
     let totalLoudness =  audioData.reduce((total,num) => total + num);
     let averageLoudness =  totalLoudness/(analyserNode.fftSize/2);
     
@@ -116,13 +106,14 @@ const draw = (params={},fps) => {
     lastFrame = frame;
     currentDurration += elapsed;
     
-
+    let beatCondition = (((loudnessAt2K > 225)) || ((loudnessAt2K > 150) && (currentDurration > totalBoltDuration)));
 	// 4 - draw lightning
-	if(params.showBars && (((loudnessAt2K > 250)) || ((loudnessAt2K > 150) && (currentDurration > totalBoltDuration)))) {
+	if(params.showLightning && beatCondition) {
+       
         
-        addRain();
         currentDurration = 0;
 
+        if(params.showFlash) flashOpacity = 0.15 + Math.random() * 0.2;
         let realitiveInputedStrikes = 10;
 
         ctx.save();
@@ -213,46 +204,29 @@ const draw = (params={},fps) => {
         ctx.restore();
     }
 
+    // Draw the flash
+    if (flashOpacity > 0.0 && params.showFlash) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${flashOpacity})`;
+        ctx.fillRect(0.0, 0.0, window.innerWidth, window.innerHeight);
+        flashOpacity = Math.max(0.0, flashOpacity - 2.0 * elapsed);
+    }
+    else
+    {
+        flashOpacity = 0;
+    }
+
 
 	// 5 - draw circles
-    if(params.showCircle) {
+    if(params.showRain && beatCondition)
+    {
+        addRain();
+    }
+    else if(params.showRain) {
 
-        drawRain();
-        console.log(rainDrops);
-        /*
-        let maxRadius = canvasHeight/4;
         ctx.save();
-        ctx.globalAlpha = 0.5;
-        for(let i = 0; i<audioData.length; i++) {
-            // red circles
-            let percent = audioData[i] / 255;
-            
-            let circlesRadius = percent * maxRadius;
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(255, 111, 111, 0.34 - percent/3.0);
-            ctx.arc(canvasWidth/2,canvasHeight/2, circlesRadius, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.closePath();
-
-            // blue circles, bigger more transparernt
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(0, 0, 255, 0.10 - percent/10.0);
-            ctx.arc(canvasWidth/2,canvasHeight/2, circlesRadius * 1.5, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.closePath();
-
-            // Smaller Yellow
-            ctx.save();
-            ctx.beginPath();
-            ctx.fillStyle = utils.makeColor(200, 200, 0, 0.5 - percent/5.0);
-            ctx.arc(canvasWidth/2,canvasHeight/2, circlesRadius * .50, 0, 2 * Math.PI, false);
-            ctx.fill();
-            ctx.closePath();
-            ctx.restore();
-
-        }
+        ctx.globalAlpha = 1;
+        drawRain();
         ctx.restore();
-        */
     }
 
 

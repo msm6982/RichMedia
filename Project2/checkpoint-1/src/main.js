@@ -8,8 +8,9 @@
 // If you want to re-write these as ES6 arrow functions, to be consistent with the other files, go ahead!
 const drawParams = {
   showGradient : false,
-  showBars     : true,
-  showCircle   : false,
+  showLightning: true,
+  showRain     : false,
+  showFlash    : true,
   showNoise    : false,
   showInvert   : false,
   showEmboss   : false
@@ -113,12 +114,16 @@ function setupUI(canvasElement){
     drawParams.showGradient = e.target.checked;
   }
 
-  document.querySelector("#barsCB").onclick = function(e) {
-    drawParams.showBars = e.target.checked;
+  document.querySelector("#lightningCB").onclick = function(e) {
+    drawParams.showLightning = e.target.checked;
   }
 
-  document.querySelector("#circlesCB").onclick = function(e) {
-    drawParams.showCircle = e.target.checked;
+  document.querySelector("#rainCB").onclick = function(e) {
+    drawParams.showRain = e.target.checked;
+  }
+
+  document.querySelector("#flashCB").onclick = function(e) {
+    drawParams.showFlash = e.target.checked;
   }
 
   document.querySelector("#noiseCB").onclick = function(e) {
