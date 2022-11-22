@@ -1,0 +1,163 @@
+(function() {
+  // The main canvas and context.
+  var boltFadeDuration, boltFlashDuration, bolts, canvas, context, flashOpacity, fps, height, lastFrame, launchBolt, recursiveLaunchBolt, scale, setCanvasSize, tick, totalBoltDuration, width;
+
+  canvas = document.getElementById("canvas");
+
+  context = canvas.getContext("2d");
+
+  // The size and scale of the canvas. The size will get set via setCanvasSize to match the size of
+  // the window. Change the scale to get a more or less pixel-y effect.
+  width = 0.0;
+
+  height = 0.0;
+
+  scale = 1.0;
+
+  // The frames per second of the simulation. We also keep track of the time the previous frame
+  // occurred so that we know the duration between each frame.
+  fps = 45.0;
+
+  lastFrame = (new Date()).getTime();
+
+  // The screen will flash briefly when the flash opacity is set. The opacity will dissipate quickly
+  // over time.
+  flashOpacity = 0.0;
+
+  // When a bolt appears, it will be drawn at full opacity for the flash duration, and then will fade
+  // out gradually over the fade duration.
+  boltFlashDuration = 0.25;
+
+  boltFadeDuration = 0.5;
+
+  totalBoltDuration = boltFlashDuration + boltFadeDuration;
+
+  // The list of bolts. A bolt will get added to this list on creation, and then will be automatically
+  // removed after it's done fading out.
+  bolts = [];
+
+  // Sets the size of the canvas and each bolt canvas.
+  setCanvasSize = function() {
+    var bolt, j, len;
+    canvas.setAttribute("width", window.innerWidth);
+    canvas.setAttribute("height", window.innerHeight);
+    for (j = 0, len = bolts.length; j < len; j++) {
+      bolt = bolts[j];
+      bolt.canvas.width = window.innerWidth;
+      bolt.canvas.height = window.innerHeight;
+    }
+    width = Math.ceil(window.innerWidth / scale);
+    return height = Math.ceil(window.innerHeight / scale);
+  };
+
+  // Launch a bolt!!!
+  launchBolt = function(x, y, length, direction) {
+    var boltCanvas, boltContext;
+    // Set the flash opacity.
+    flashOpacity = 0.15 + Math.random() * 0.2;
+    
+    // Create the bolt canvas.
+    boltCanvas = document.createElement("canvas");
+    boltCanvas.width = window.innerWidth;
+    boltCanvas.height = window.innerHeight;
+    boltContext = boltCanvas.getContext("2d");
+    boltContext.scale(scale, scale);
+    
+    // Add the bolt to the list.
+    bolts.push({
+      canvas: boltCanvas,
+      duration: 0.0
+    });
+    
+    // Launch it!!
+    return recursiveLaunchBolt(x, y, length, direction, boltContext);
+  };
+
+  // Recursive bolt action.
+  recursiveLaunchBolt = function(x, y, length, direction, boltContext) {
+    var boltInterval, originalDirection;
+    originalDirection = direction;
+    
+    // We draw the bolt incrementally to get a nice animated effect.
+    return boltInterval = setInterval((function() {
+      var alpha, i, x1, y1;
+      if (length <= 0) {
+        clearInterval(boltInterval);
+        return;
+      }
+      i = 0;
+      while (i++ < Math.floor(45 / scale) && length > 0) {
+        x1 = Math.floor(x);
+        y1 = Math.floor(y);
+        x += Math.cos(direction);
+        y -= Math.sin(direction);
+        length--;
+        if (x1 !== Math.floor(x) || y1 !== Math.floor(y)) {
+          alpha = Math.min(1.0, length / 350.0);
+          boltContext.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          boltContext.fillRect(x1, y1, 1.0, 1.0);
+          direction = originalDirection + (-Math.PI / 8.0 + Math.random() * (Math.PI / 4.0));
+          if (Math.random() > 0.98) {
+            recursiveLaunchBolt(x1, y1, length * (0.3 + Math.random() * 0.4), originalDirection + (-Math.PI / 6.0 + Math.random() * (Math.PI / 3.0)), boltContext);
+          } else if (Math.random() > 0.95) {
+            recursiveLaunchBolt(x1, y1, length, originalDirection + (-Math.PI / 6.0 + Math.random() * (Math.PI / 3.0)), boltContext);
+            length = 0;
+          }
+        }
+      }
+      return void 0;
+    }), 10);
+  };
+
+  // This will get fired at a constant framerate.
+  tick = function() {
+    var bolt, elapsed, frame, i, j, len, length, x, y;
+    // Keep track of the frame time.
+    frame = (new Date()).getTime();
+    elapsed = (frame - lastFrame) / 1000.0;
+    lastFrame = frame;
+    
+    // Clear the canvas.
+    context.clearRect(0.0, 0.0, window.innerWidth, window.innerHeight);
+    
+    // Fire a bolt every once in a while.
+    if (Math.random() > 0.98) {
+      x = Math.floor(-10.0 + Math.random() * (width + 20.0));
+      y = Math.floor(5.0 + Math.random() * (height / 3.0));
+      length = Math.floor(height / 2.0 + Math.random() * (height / 3.0));
+      launchBolt(x, y, length, Math.PI * 3.0 / 2.0);
+    }
+    
+    // Draw the flash.
+    if (flashOpacity > 0.0) {
+      context.fillStyle = `rgba(255, 255, 255, ${flashOpacity})`;
+      context.fillRect(0.0, 0.0, window.innerWidth, window.innerHeight);
+      flashOpacity = Math.max(0.0, flashOpacity - 2.0 * elapsed);
+    }
+
+    // Draw each bolt.
+    for (i = j = 0, len = bolts.length; j < len; i = ++j) {
+      bolt = bolts[i];
+      bolt.duration += elapsed;
+      if (bolt.duration >= totalBoltDuration) {
+        bolts.splice(i, 1);
+        i--;
+        return;
+      }
+      context.globalAlpha = Math.max(0.0, Math.min(1.0, (totalBoltDuration - bolt.duration) / boltFadeDuration));
+      context.drawImage(bolt.canvas, 0.0, 0.0);
+    }
+    return void 0;
+  };
+
+  // Start it up!!!
+  window.addEventListener("resize", setCanvasSize);
+
+  setCanvasSize();
+
+  setInterval(tick, 1000.0 / fps);
+
+}).call(this);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiPGFub255bW91cz4iXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQThCO0VBQUE7QUFBQSxNQUFBLGdCQUFBLEVBQUEsaUJBQUEsRUFBQSxLQUFBLEVBQUEsTUFBQSxFQUFBLE9BQUEsRUFBQSxZQUFBLEVBQUEsR0FBQSxFQUFBLE1BQUEsRUFBQSxTQUFBLEVBQUEsVUFBQSxFQUFBLG1CQUFBLEVBQUEsS0FBQSxFQUFBLGFBQUEsRUFBQSxJQUFBLEVBQUEsaUJBQUEsRUFBQTs7RUFDOUIsTUFBQSxHQUFVLFFBQVEsQ0FBQyxjQUFULENBQXdCLFFBQXhCOztFQUNWLE9BQUEsR0FBVSxNQUFNLENBQUMsVUFBUCxDQUFrQixJQUFsQixFQUZvQjs7OztFQU05QixLQUFBLEdBQVM7O0VBQ1QsTUFBQSxHQUFTOztFQUNULEtBQUEsR0FBUyxJQVJxQjs7OztFQVk5QixHQUFBLEdBQVk7O0VBQ1osU0FBQSxHQUFZLENBQUMsSUFBSSxJQUFKLENBQUEsQ0FBRCxDQUFVLENBQUMsT0FBWCxDQUFBLEVBYmtCOzs7O0VBaUI5QixZQUFBLEdBQWUsSUFqQmU7Ozs7RUFxQjlCLGlCQUFBLEdBQW9COztFQUNwQixnQkFBQSxHQUFvQjs7RUFDcEIsaUJBQUEsR0FBb0IsaUJBQUEsR0FBb0IsaUJBdkJWOzs7O0VBMkI5QixLQUFBLEdBQVEsR0EzQnNCOzs7RUE4QjlCLGFBQUEsR0FBZ0IsUUFBQSxDQUFBLENBQUE7QUFDaEIsUUFBQSxJQUFBLEVBQUEsQ0FBQSxFQUFBO0lBQUMsTUFBTSxDQUFDLFlBQVAsQ0FBb0IsT0FBcEIsRUFBOEIsTUFBTSxDQUFDLFVBQXJDO0lBQ0EsTUFBTSxDQUFDLFlBQVAsQ0FBb0IsUUFBcEIsRUFBOEIsTUFBTSxDQUFDLFdBQXJDO0lBRUEsS0FBQSx1Q0FBQTs7TUFDQyxJQUFJLENBQUMsTUFBTSxDQUFDLEtBQVosR0FBcUIsTUFBTSxDQUFDO01BQzVCLElBQUksQ0FBQyxNQUFNLENBQUMsTUFBWixH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QUFjLENBQUMsaUJBQUEsR0FBb0IsSUFBSSxDQUFDLFFBQTFCLENBQUEsR0FBc0MsZ0JBQXBELENBQWQ7TUFDdEIsT0FBTyxDQUFDLFNBQVIsQ0FBa0IsSUFBSSxDQUFDLE1BQXZCLEVBQStCLEdBQS9CLEVBQW9DLEdBQXBDO0lBVEQ7V0FXQTtFQW5DTSxFQTlGdUI7OztFQW9JOUIsTUFBTSxDQUFDLGdCQUFQLENBQXdCLFFBQXhCLEVBQWtDLGFBQWxDOztFQUNBLGFBQUEsQ0FBQTs7RUFDQSxXQUFBLENBQVksSUFBWixFQUFrQixNQUFBLEdBQVMsR0FBM0I7QUF0SThCIiwic291cmNlc0NvbnRlbnQiOlsiIyBUaGUgbWFpbiBjYW52YXMgYW5kIGNvbnRleHQuXG5jYW52YXMgID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQgXCJjYW52YXNcIlxuY29udGV4dCA9IGNhbnZhcy5nZXRDb250ZXh0IFwiMmRcIlxuXG4jIFRoZSBzaXplIGFuZCBzY2FsZSBvZiB0aGUgY2FudmFzLiBUaGUgc2l6ZSB3aWxsIGdldCBzZXQgdmlhIHNldENhbnZhc1NpemUgdG8gbWF0Y2ggdGhlIHNpemUgb2ZcbiMgdGhlIHdpbmRvdy4gQ2hhbmdlIHRoZSBzY2FsZSB0byBnZXQgYSBtb3JlIG9yIGxlc3MgcGl4ZWwteSBlZmZlY3QuXG53aWR0aCAgPSAwLjBcbmhlaWdodCA9IDAuMFxuc2NhbGUgID0gMS4wXG5cbiMgVGhlIGZyYW1lcyBwZXIgc2Vjb25kIG9mIHRoZSBzaW11bGF0aW9uLiBXZSBhbHNvIGtlZXAgdHJhY2sgb2YgdGhlIHRpbWUgdGhlIHByZXZpb3VzIGZyYW1lXG4jIG9jY3VycmVkIHNvIHRoYXQgd2Uga25vdyB0aGUgZHVyYXRpb24gYmV0d2VlbiBlYWNoIGZyYW1lLlxuZnBzICAgICAgID0gNDUuMFxubGFzdEZyYW1lID0gKG5ldyBEYXRlKS5nZXRUaW1lKClcblxuIyBUaGUgc2NyZWVuIHdpbGwgZmxhc2ggYnJpZWZseSB3aGVuIHRoZSBmbGFzaCBvcGFjaXR5IGlzIHNldC4gVGhlIG9wYWNpdHkgd2lsbCBkaXNzaXBhdGUgcXVpY2tseVxuIyBvdmVyIHRpbWUuXG5mbGFzaE9wYWNpdHkgPSAwLjBcblxuIyBXaGVuIGEgYm9sdCBhcHBlYXJzLCBpdCB3aWxsIGJlIGRyYXduIGF0IGZ1bGwgb3BhY2l0eSBmb3IgdGhlIGZsYXNoIGR1cmF0aW9uLCBhbmQgdGhlbiB3aWxsIGZhZGVcbiMgb3V0IGdyYWR1YWxseSBvdmVyIHRoZSBmYWRlIGR1cmF0aW9uLlxuYm9sdEZsYXNoRHVyYXRpb24gPSAwLjI1XG5ib2x0RmFkZUR1cmF0aW9uICA9IDAuNVxudG90YWxCb2x0RHVyYXRpb24gPSBib2x0Rmxhc2hEdXJhdGlvbiArIGJvbHRGYWRlRHVyYXRpb25cblxuIyBUaGUgbGlzdCBvZiBib2x0cy4gQSBib2x0IHdpbGwgZ2V0IGFkZGVkIHRvIHRoaXMgbGlzdCBvbiBjcmVhdGlvbiwgYW5kIHRoZW4gd2lsbCBiZSBhdXRvbWF0aWNhbGx5XG4jIHJlbW92ZWQgYWZ0ZXIgaXQncyBkb25lIGZhZGluZyBvdXQuXG5ib2x0cyA9IFtdXG5cbiMgU2V0cyB0aGUgc2l6ZSBvZiB0aGUgY2FudmFzIGFuZCBlYWNoIGJvbHQgY2FudmFzLlxuc2V0Q2FudmFzU2l6ZSA9IC0+XG5cdGNhbnZhcy5zZXRBdHRyaWJ1dGUgXCJ3aWR0aFwiLCAgd2luZG93LmlubmVyV2lkdGhcblx0Y2FudmFzLnNldEF0dHJpYnV0ZSBcImhlaWdodFwiLCB3aW5kb3cuaW5uZXJIZWlnaHRcblx0XG5cdGZvciBib2x0IGluIGJvbHRzXG5cdFx0Ym9sdC5jYW52YXMud2lkdGggID0gd2luZG93LmlubmVyV2lkdGhcblx0XHRib2x0LmNhbnZhcy5oZWlnaHQgPSB3aW5kb3cuaW5uZXJIZWlnaHRcblx0XG5cdHdpZHRoICA9IE1hdGguY2VpbCB3aW5kb3cuaW5uZXJXaWR0aCAgLyBzY2FsZVxuXHRoZWlnaHQgPSBNYXRoLmNlaWwgd2luZG93LmlubmVySGVpZ2h0IC8gc2NhbGVcblxuIyBMYXVuY2ggYSBib2x0ISEhXG5sYXVuY2hCb2x0ID0gKHgsIHksIGxlbmd0aCwgZGlyZWN0aW9uKSAtPlxuXHQjIFNldCB0aGUgZmxhc2ggb3BhY2l0eS5cblx0Zmxhc2hPcGFjaXR5ID0gMC4xNSArIE1hdGgucmFuZG9tKCkgKiAwLjJcblx0XG5cdCMgQ3JlYXRlIHRoZSBib2x0IGNhbnZhcy5cblx0Ym9sdENhbnZhcyAgICAgICAgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50IFwiY2FudmFzXCJcblx0Ym9sdENhbnZhcy53aWR0aCAgPSB3aW5kb3cuaW5uZXJXaWR0aFxuXHRib2x0Q2FudmFzLmhlaWdodCA9IHdpbmRvdy5pbm5lckhlaWdodFxuXHRib2x0Q29udGV4dCAgICAgICA9IGJvbHRDYW52YXMuZ2V0Q29udGV4dCBcIjJkXCJcblx0Ym9sdENvbnRleHQuc2NhbGUgc2NhbGUsIHNjYWxlXG5cdFxuXHQjIEFkZCB0aGUgYm9sdCB0byB0aGUgbGlzdC5cblx0Ym9sdHMucHVzaCB7IGNhbnZhczogYm9sdENhbnZhcywgZHVyYXRpb246IDAuMCB9XG5cdFxuXHQjIExhdW5jaCBpdCEhXG5cdHJlY3Vyc2l2ZUxhdW5jaEJvbHQgeCwgeSwgbGVuZ3RoLCBkaXJlY3Rpb24sIGJvbHRDb250ZXh0XG5cbiMgUmVjdXJzaXZlIGJvbHQgYWN0aW9uLlxucmVjdXJzaXZlTGF1bmNoQm9sdCA9ICh4LCB5LCBsZW5ndGgsIGRpcmVjdGlvbiwgYm9sdENvbnRleHQpIC0+XG5cdG9yaWdpbmFsRGlyZWN0aW9uID0gZGlyZWN0aW9uXG5cdFxuXHQjIFdlIGRyYXcgdGhlIGJvbHQgaW5jcmVtZW50YWxseSB0byBnZXQgYSBuaWNlIGFuaW1hdGVkIGVmZmVjdC5cblx0Ym9sdEludGVydmFsID0gc2V0SW50ZXJ2YWwgKC0+XG5cdFx0aWYgbGVuZ3RoIDw9IDBcblx0XHRcdGNsZWFySW50ZXJ2YWwgYm9sdEludGVydmFsXG5cdFx0XHRyZXR1cm5cblx0XHRcblx0XHRpID0gMFxuXHRcdHdoaWxlIGkrKyA8IE1hdGguZmxvb3IoNDUgLyBzY2FsZSkgYW5kIGxlbmd0aCA+IDBcblx0XHRcdHgxID0gTWF0aC5mbG9vciB4XG5cdFx0XHR5MSA9IE1hdGguZmxvb3IgeVxuXHRcdFx0eCArPSBNYXRoLmNvcyBkaXJlY3Rpb25cblx0XHRcdHkgLT0gTWF0aC5zaW4gZGlyZWN0aW9uXG5cdFx0XHRsZW5ndGgtLVxuXHRcdFx0XG5cdFx0XHRpZiB4MSAhPSBNYXRoLmZsb29yKHgpIG9yIHkxICE9IE1hdGguZmxvb3IoeSlcblx0XHRcdFx0YWxwaGEgICAgICAgICAgICAgICAgID0gTWF0aC5taW4gMS4wLCBsZW5ndGggLyAzNTAuMFxuXHRcdFx0XHRib2x0Q29udGV4dC5maWxsU3R5bGUgPSBcInJnYmEoMjU1LCAyNTUsIDI1NSwgI3thbHBoYX0pXCJcblx0XHRcdFx0Ym9sdENvbnRleHQuZmlsbFJlY3QgeDEsIHkxLCAxLjAsIDEuMFxuXHRcdFx0XHRcblx0XHRcdFx0ZGlyZWN0aW9uID0gb3JpZ2luYWxEaXJlY3Rpb24gKyAoLU1hdGguUEkgLyA4LjAgKyBNYXRoLnJhbmRvbSgpICogKE1hdGguUEkgLyA0LjApKVxuXHRcdFx0XHRcblx0XHRcdFx0aWYgTWF0aC5yYW5kb20oKSA+IDAuOThcblx0XHRcdFx0XHRyZWN1cnNpdmVMYXVuY2hCb2x0IHgxLCB5MSwgbGVuZ3RoICogKDAuMyArIE1hdGgucmFuZG9tKCkgKiAwLjQpLCBvcmlnaW5hbERpcmVjdGlvbiArICgtTWF0aC5QSSAvIDYuMCArIE1hdGgucmFuZG9tKCkgKiAoTWF0aC5QSSAvIDMuMCkpLCBib2x0Q29udGV4dFxuXHRcdFx0XHRlbHNlIGlmIE1hdGgucmFuZG9tKCkgPiAwLjk1XG5cdFx0XHRcdFx0cmVjdXJzaXZlTGF1bmNoQm9sdCB4MSwgeTEsIGxlbmd0aCwgb3JpZ2luYWxEaXJlY3Rpb24gKyAoLU1hdGguUEkgLyA2LjAgKyBNYXRoLnJhbmRvbSgpICogKE1hdGguUEkgLyAzLjApKSwgYm9sdENvbnRleHRcblx0XHRcdFx0XHRsZW5ndGggPSAwXG5cdFx0XG5cdFx0dW5kZWZpbmVkXG5cdCksIDEwXG5cbiMgVGhpcyB3aWxsIGdldCBmaXJlZCBhdCBhIGNvbnN0YW50IGZyYW1lcmF0ZS5cbnRpY2sgPSAtPlxuXHQjIEtlZXAgdHJhY2sgb2YgdGhlIGZyYW1lIHRpbWUuXG5cdGZyYW1lICAgICA9IChuZXcgRGF0ZSkuZ2V0VGltZSgpXG5cdGVsYXBzZWQgICA9IChmcmFtZSAtIGxhc3RGcmFtZSkgLyAxMDAwLjBcblx0bGFzdEZyYW1lID0gZnJhbWVcblx0XG5cdCMgQ2xlYXIgdGhlIGNhbnZhcy5cblx0Y29udGV4dC5jbGVhclJlY3QgMC4wLCAwLjAsIHdpbmRvdy5pbm5lcldpZHRoLCB3aW5kb3cuaW5uZXJIZWlnaHRcblx0XG5cdCMgRmlyZSBhIGJvbHQgZXZlcnkgb25jZSBpbiBhIHdoaWxlLlxuXHRpZiBNYXRoLnJhbmRvbSgpID4gMC45OFxuXHRcdHggICAgICA9IE1hdGguZmxvb3IgLTEwLjAgKyBNYXRoLnJhbmRvbSgpICogKHdpZHRoICsgMjAuMClcblx0XHR5ICAgICAgPSBNYXRoLmZsb29yIDUuMCArIE1hdGgucmFuZG9tKCkgKiAoaGVpZ2h0IC8gMy4wKVxuXHRcdGxlbmd0aCA9IE1hdGguZmxvb3IgaGVpZ2h0IC8gMi4wICsgTWF0aC5yYW5kb20oKSAqIChoZWlnaHQgLyAzLjApXG5cdFx0XG5cdFx0bGF1bmNoQm9sdCB4LCB5LCBsZW5ndGgsIE1hdGguUEkgKiAzLjAgLyAyLjBcblx0XG5cdCMgRHJhdyB0aGUgZmxhc2guXG5cdGlmIGZsYXNoT3BhY2l0eSA+IDAuMFxuXHRcdGNvbnRleHQuZmlsbFN0eWxlID0gXCJyZ2JhKDI1NSwgMjU1LCAyNTUsICN7Zmxhc2hPcGFjaXR5fSlcIlxuXHRcdGNvbnRleHQuZmlsbFJlY3QgMC4wLCAwLjAsIHdpbmRvdy5pbm5lcldpZHRoLCB3aW5kb3cuaW5uZXJIZWlnaHRcblx0XHRmbGFzaE9wYWNpdHkgPSBNYXRoLm1heCAwLjAsIGZsYXNoT3BhY2l0eSAtIDIuMCAqIGVsYXBzZWRcblx0XG5cdCMgRHJhdyBlYWNoIGJvbHQuXG5cdGZvciBib2x0LCBpIGluIGJvbHRzXG5cdFx0Ym9sdC5kdXJhdGlvbiArPSBlbGFwc2VkXG5cdFx0XG5cdFx0aWYgYm9sdC5kdXJhdGlvbiA+PSB0b3RhbEJvbHREdXJhdGlvblxuXHRcdFx0Ym9sdHMuc3BsaWNlIGksIDFcblx0XHRcdGktLVxuXHRcdFx0cmV0dXJuXG5cdFx0XG5cdFx0Y29udGV4dC5nbG9iYWxBbHBoYSA9IE1hdGgubWF4IDAuMCwgTWF0aC5taW4oMS4wLCAodG90YWxCb2x0RHVyYXRpb24gLSBib2x0LmR1cmF0aW9uKSAvIGJvbHRGYWRlRHVyYXRpb24pXG5cdFx0Y29udGV4dC5kcmF3SW1hZ2UgYm9sdC5jYW52YXMsIDAuMCwgMC4wXG5cdFxuXHR1bmRlZmluZWRcblxuIyBTdGFydCBpdCB1cCEhIVxud2luZG93LmFkZEV2ZW50TGlzdGVuZXIgXCJyZXNpemVcIiwgc2V0Q2FudmFzU2l6ZVxuc2V0Q2FudmFzU2l6ZSgpXG5zZXRJbnRlcnZhbCB0aWNrLCAxMDAwLjAgLyBmcHNcbiJdfQ==
+//# sourceURL=coffeescript

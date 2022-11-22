@@ -7,9 +7,9 @@
 // In this instance, we feel the code is more readable if written this way
 // If you want to re-write these as ES6 arrow functions, to be consistent with the other files, go ahead!
 const drawParams = {
-  showGradient : true,
+  showGradient : false,
   showBars     : true,
-  showCircle   : true,
+  showCircle   : false,
   showNoise    : false,
   showInvert   : false,
   showEmboss   : false
@@ -76,6 +76,9 @@ function setupUI(canvasElement){
   let volumeSlider = document.querySelector("#volumeSlider");
   let volumeLabel = document.querySelector("#volumeLabel");
 
+  let lightningSlider = document.querySelector("#lightningRadomness");
+  let lightningLabel = document.querySelector("#lightningDisplay");
+
   // oninput event to slider
   volumeSlider.oninput = e => {
     // set the gain
@@ -84,9 +87,16 @@ function setupUI(canvasElement){
     volumeLabel.innerHTML = Math.round((e.target.value/2 * 100));
   };
   
+  lightningSlider.oninput = e => {
+    // set the gain
+    canvas.setRandom(e.target.value);
+    // update value of label to match value of slider
+    lightningLabel.innerHTML = Math.round((e.target.value * 100));
+  };
 
   // set value of label to match initial value of slider
   volumeSlider.dispatchEvent(new Event("input"));
+  lightningSlider.dispatchEvent(new Event("input"));
 
   // hookup track select
   let trackSelect = document.querySelector("#trackSelect");

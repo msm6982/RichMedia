@@ -9,14 +9,20 @@
 
 import * as utils from './utils.js';
 
-let ctx,canvasWidth,canvasHeight,gradient,analyserNode,audioData;
 
+let ctx,canvasWidth,canvasHeight,gradient,analyserNode,audioData, distanceDivider, lightningRandomness, lastFrame, totalBoltDuration, currentDurration, rainDrops, environment; // Init all objects here
+
+let rainType;
+let raindropCount;
+  
 
 const setupCanvas = (canvasElement,analyserNodeRef) => {
 	// create drawing context
 	ctx = canvasElement.getContext("2d");
 	canvasWidth = canvasElement.width;
 	canvasHeight = canvasElement.height;
+
+    distanceDivider = 5.5;
 	// create a gradient that runs top to bottom
 	//gradient = utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"blue"},{percent:.25,color:"green"},{percent:.5,color:"yellow"},{percent:.75,color:"red"},{percent:1,color:"magenta"}]);
     gradient = utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"blue"},{percent:1,color:"magenta"}]);
@@ -24,8 +30,43 @@ const setupCanvas = (canvasElement,analyserNodeRef) => {
 	analyserNode = analyserNodeRef;
 	// this is the array where the analyser data will be stored
     audioData = new Uint8Array(analyserNode.fftSize/2);
+    lastFrame = (new Date()).getTime();
+
+    let boltFlashDuration = 0.25;
+
+    let boltFadeDuration = 0.25;
+
+    totalBoltDuration = boltFlashDuration + boltFadeDuration;
+    currentDurration = 0;
+    rainDrops = [];
 	
+    
+    rainType = {
+        drizzle: { count: 30, speed: 0.27 },
+        light: { count: 100, speed: 0.3 },
+        medium: { count: 250, speed: 0.4 },
+        downpour: { count: 500, speed: 0.5 },
+        afteshower: { count: 3, speed: 0.4 }
+    };
+    
+    environment = {
+        wind: utils.createVector(-0.05, 0),
+        rainType: rainType.light,
+    };
+
+    raindropCount = environment.rainType.count;
+
 }
+
+
+
+// The screen will flash briefly when the flash opacity is set. The opacity will dissipate quickly
+// over time.
+let flashOpacity = 0.0;
+
+// When a bolt appears, it will be drawn at full opacity for the flash duration, and then will fade
+// out gradually over the fade duration.
+
 
 const draw = (params={},fps) => {
     // 1 - populate the audioData array with the frequency data from the analyserNode
@@ -49,18 +90,40 @@ const draw = (params={},fps) => {
         ctx.fillRect(0,0,canvasWidth,canvasHeight);
         ctx.restore();
     }
-	
-	// 4 - draw bars
-	if(params.showBars) {
-        
-        let realitiveInputedStrikes = 10;
+    else
+    {
+        ctx.save();
+        ctx.fillStyle = 'black';
+        ctx.globalAlpha = .1;
+        ctx.fillRect(0,0,canvasWidth,canvasHeight);
+        ctx.restore();
+    }
 
-        let barSpacing = 4;
-        let margin = 5;
-        let screenWidthForBars = canvasWidth - (audioData.length * barSpacing) - margin * 2;
-        let barWidth = screenWidthForBars / audioData.length;
-        let barHeight = 200;
-        let topSpacing = 100;
+
+    
+	//console.log(audioData);
+            
+    
+    let totalLoudness =  audioData.reduce((total,num) => total + num);
+    let averageLoudness =  totalLoudness/(analyserNode.fftSize/2);
+    
+    let loudnessAt2K = audioData[11];
+    
+    	
+    
+    let frame = (new Date()).getTime();
+    let elapsed = (frame - lastFrame) / 1000.0;
+    lastFrame = frame;
+    currentDurration += elapsed;
+    
+
+	// 4 - draw lightning
+	if(params.showBars && (((loudnessAt2K > 250)) || ((loudnessAt2K > 150) && (currentDurration > totalBoltDuration)))) {
+        
+        addRain();
+        currentDurration = 0;
+
+        let realitiveInputedStrikes = 10;
 
         ctx.save();
         ctx.fillStyle = `rgba(255,255,255,0.50)`;
@@ -69,12 +132,17 @@ const draw = (params={},fps) => {
         // loop through and draw data getting only values that have some frequency to them
         //console.log(audioData);
 
-        // Entire Matrix of lightning strikes
-        let lightningStrikeMatrix = []; 
+        // Entire Matrix of lightning strikes segments/lines
+        let lightningStrikeLines = [];
         for (let i = 0; i < realitiveInputedStrikes; i++) {
-            lightningStrikeMatrix.push([])
+
+            lightningStrikeLines.push([]);
 
         }
+
+        
+
+        // Add audio data to the lightning strikes
         let strikeSamples = Math.round(audioData.length/realitiveInputedStrikes);
         let loopStrikeCounter = -1;
         for (let i = 0; i < audioData.length; i++) {
@@ -83,22 +151,75 @@ const draw = (params={},fps) => {
             {
                 loopStrikeCounter++;
             }
-            lightningStrikeMatrix[loopStrikeCounter].push(audioData[i]);
+            // Ensurese no empty data is added
+            if(audioData[i] > 0)
+            {
+                lightningStrikeLines[loopStrikeCounter].push({xEnd: 0, yEnd: 0, distance: audioData[i]});
+            }
         }
-        //console.log(lightningStrikeMatrix);
 
+        // Populate the lightning with distances and positions
+        // Also Draw it Lightning
+        ctx.save();
+        ctx.strokeStyle = "white";
+        
+        ctx.lineWidth = 1;
+        
+        
+        let xStart = canvasWidth/lightningStrikeLines.length;
+        let yStart = canvasHeight/16;
+        
+        for(let j = 0; j < lightningStrikeLines.length; j++)
+        {
+            
+            let lightningDis = (j *  xStart) + xStart;
+            
+            let currentX = utils.getRandom(lightningDis - xStart/2, lightningDis + xStart/2);
+            let currentY = utils.getRandom(0, yStart);
+            ctx.beginPath();
+            ctx.lineTo(currentX,currentY);
 
+            for (let i = 0; i < lightningStrikeLines[j].length; i++)
+            {
+                lightningStrikeLines[j][i] = createLightningSegment(currentX, currentY, lightningStrikeLines[j][i].distance);
+                currentX =  lightningStrikeLines[j][i].xEnd;
+                currentY = lightningStrikeLines[j][i].yEnd;
+                ctx.lineTo(lightningStrikeLines[j][i].xEnd, lightningStrikeLines[j][i].yEnd);
+            }
+            ctx.stroke();
+
+            ctx.closePath();
+        }
+
+        /*
+        for (let i = 0; i < lightningStrikeLines[j].length; i++)
+        {
+           ctx.lineTo(lightningStrikeLines[j][i].xEnd, lightningStrikeLines[j][i].yEnd);
+        }
+        */
+        
+        //ctx.stroke();
+
+        ctx.closePath();
+        ctx.restore();
+
+        /*
         for (let i = 0; i < audioData.length; i++) {
             //if()
             ctx.fillRect(margin + i * (barWidth + barSpacing), canvasHeight , barWidth, -(barHeight  - 256 + audioData[i]));
             ctx.strokeRect(margin + i * (barWidth + barSpacing), canvasHeight, barWidth, -(barHeight - 256 + audioData[i]));
         }
+        */
         ctx.restore();
     }
 
 
 	// 5 - draw circles
     if(params.showCircle) {
+
+        drawRain();
+        console.log(rainDrops);
+        /*
         let maxRadius = canvasHeight/4;
         ctx.save();
         ctx.globalAlpha = 0.5;
@@ -131,7 +252,25 @@ const draw = (params={},fps) => {
 
         }
         ctx.restore();
+        */
     }
+
+
+
+   // Create an end point of a lightnight segment 
+    function createLightningSegment(xStart, yStart, distance) {
+    
+    // Radom angle between 45 and 135 degrees
+    let minAngle =  0 + lightningRandomness;
+    let maxAngle = (Math.PI ) - lightningRandomness;
+    let randomAngle = utils.getRandom(minAngle, maxAngle);
+    //console.log(Math.sin(randomAngle));
+    let xFinal = xStart + ((distance / distanceDivider) * Math.cos(randomAngle));
+    let yFinal = yStart + ((distance / distanceDivider) * Math.sin(randomAngle));
+    
+    return {xEnd: xFinal, yEnd: yFinal, distance: distance};
+  }
+  
 
     // 6 - bitmap manipulation
 	// TODO: right now. we are looping though every pixel of the canvas (320,000 of them!), 
@@ -178,7 +317,93 @@ const draw = (params={},fps) => {
 	
 	// D) copy image data back to canvas
     ctx.putImageData(imageData,0,0);
-		
+    
+    /*
+    //let minLoudness =  Math.min(...audioData); // ooh - the ES6 spread operator is handy!
+    // let maxLoudness =  Math.max(...audioData); // ditto!
+    // Now look at loudness in a specific bin
+    // 22050 kHz divided by 128 bins = 172.23 kHz per bin
+    // the 12th element in array represents loudness at 2.067 kHz
+    console.log("-----Audio Stats-----"); 
+    console.log(`averageLoudness = ${averageLoudness}`);
+    //console.log(`minLoudness = ${minLoudness}`);
+    //console.log(`maxLoudness = ${maxLoudness}`);
+    console.log(`loudnessAt2K = ${loudnessAt2K}`);
+    console.log("---------------------");
+    */
+	
 };
 
-export {setupCanvas,draw};
+
+//https://dev.to/soorajsnblaze333/make-it-rain-in-html-canvas-1fj0
+  
+  class Raindrop {
+    constructor(x, y, radius, accY){
+      this.location = utils.createVector(x, y); 
+      this.radius = radius;
+      this.velocity = utils.createVector(0, 0);
+      this.acceleration = utils.createVector(0, accY);
+      this.mass = 1;
+  
+      this.wind = environment.wind;
+      this.acceleration = utils.vectorAddition(this.acceleration, this.wind);
+    }
+  
+    draw() {
+      const { x, y } = this.location;
+      return utils.drawArc(ctx,x, y, this.radius, true);
+    }
+  
+    fall() { 
+      if (this.velocity.y <= (environment.rainType.speed * 50)) {
+        this.velocity = utils.vectorAddition(this.velocity, this.acceleration);
+      }
+      this.location = utils.vectorAddition(this.location, this.velocity);
+    }
+  
+  }
+  
+  
+  
+ 
+  
+    const addRain = (rainToAdd = raindropCount) => { 
+        for (let i = 0 ; i < rainToAdd ; i++) {
+            let x = utils.getRandom(0, canvasWidth);
+            let y = utils.getRandom(-350 , 0);
+            // let accY = getRandomFloat(1, 5) * 0.05;
+            let accY = environment.rainType.speed;
+            rainDrops.push(new Raindrop(x, y, 1.0, accY));
+        }
+    }
+  
+  
+  // continuous animation loop
+  const drawRain = function() {
+
+
+  
+    for (let i = 0; i < rainDrops.length; i++) {
+         
+      rainDrops[i].fall();
+      rainDrops[i].draw();
+      if(rainDrops[i].location.y > canvasHeight || rainDrops[i].location.x > canvasWidth)
+      {
+        rainDrops.splice(i,1);
+        i--;
+      }
+    }
+  
+  }
+
+
+
+
+
+// Radom Ammount of Lighning squiggle
+const setRandom = (value) => {
+    value = Number(value); // make sure that it's a Number rather than a String
+    lightningRandomness = utils.lerp((Math.PI/2), 0, value);
+};
+
+export {setupCanvas,draw,setRandom};

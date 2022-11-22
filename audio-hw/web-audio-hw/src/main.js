@@ -106,15 +106,15 @@ function loop(){
             console.log("-----Audio Stats-----");
             let totalLoudness =  audioData.reduce((total,num) => total + num);
             let averageLoudness =  totalLoudness/(audio.analyserNode.fftSize/2);
-            let minLoudness =  Math.min(...audioData); // ooh - the ES6 spread operator is handy!
-            let maxLoudness =  Math.max(...audioData); // ditto!
+            //let minLoudness =  Math.min(...audioData); // ooh - the ES6 spread operator is handy!
+           // let maxLoudness =  Math.max(...audioData); // ditto!
             // Now look at loudness in a specific bin
             // 22050 kHz divided by 128 bins = 172.23 kHz per bin
             // the 12th element in array represents loudness at 2.067 kHz
             let loudnessAt2K = audioData[11]; 
             console.log(`averageLoudness = ${averageLoudness}`);
-            console.log(`minLoudness = ${minLoudness}`);
-            console.log(`maxLoudness = ${maxLoudness}`);
+            //console.log(`minLoudness = ${minLoudness}`);
+            //console.log(`maxLoudness = ${maxLoudness}`);
             console.log(`loudnessAt2K = ${loudnessAt2K}`);
             console.log("---------------------");
     }
