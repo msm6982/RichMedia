@@ -145,7 +145,30 @@
 		ctx.stroke();
 		ctx.closePath();
 		ctx.restore();
-		
+
+
+		const lowLoudness = data.slice(0,8).reduce((prev,next) => prev + next )/8;
+		const highLoudness = data.slice(20,28).reduce((prev,next) => prev + next )/8;
+
+		const imageData = ctx.getImageData(0,0, ctx.canvas.width, ctx.canvas.height);
+		const dataArray = imageData.data;
+		const length = dataArray.length;
+		for (let i = 0; i < length; i+=4) {
+			// yellow filter
+			//dataArray[i] += 50; // red channel
+			//dataArray[i+1] += 50; // green Channel
+			// if(Math.random() < .05){
+			// 	dataArray[i] = dataArray[i+1] = dataArray[i+2] = 255;
+			// }
+
+			if(Math.random() < highLoudness/255){
+				dataArray[i] = dataArray[i+1] = dataArray[i+2] = highLoudness;
+				dataArray[i] += highLoudness/10;
+				dataArray[i + 1] += lowLoudness/10;
+				dataArray[i + 2] -= lowLoudness/10;  
+			}
+		}
+		ctx.putImageData(imageData,0,0);
     
 	}
 
