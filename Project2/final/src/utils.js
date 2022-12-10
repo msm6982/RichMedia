@@ -6,6 +6,8 @@ const makeColor = (red, green, blue, alpha = 1) => {
     return `rgba(${red},${green},${blue},${alpha})`;
   };
   
+  const createVector3 = function(x, y, z) { return { x, y, z } }
+
   const createVector = function(x, y) { return { x, y } }
   
   const vectorAddition = function(vectorA, vectorB) {
@@ -77,4 +79,4 @@ const makeColor = (red, green, blue, alpha = 1) => {
       // .. and do nothing if the method is not supported
   };
   
-  export {createVector, vectorAddition,drawArc,getRandom,makeColor, getRandomColor, getLinearGradient, goFullscreen, lerp};
+  export {createVector, vectorAddition,drawArc,getRandom,makeColor, getRandomColor, getLinearGradient, goFullscreen, lerp, createVector3};

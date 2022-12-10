@@ -4,7 +4,7 @@
 import * as utils from './utils.js';
 
 
-let ctx,canvasWidth,canvasHeight,gradient,analyserNode,audioData, distanceDivider, lightningRandomness, lastFrame, totalBoltDuration, currentDurration ; // Init all objects here
+let ctx,canvasWidth,canvasHeight,analyserNode,audioData, distanceDivider, lightningRandomness   ; // Init all objects here
 
 let realitiveInputedStrikes;
 
@@ -14,6 +14,11 @@ let raindropCount;
 let rainDrops; 
 let environment;
 let flashOpacity = 0; 
+// let lastFrame;
+// let totalBoltDuration ;
+// let currentDurration;
+
+
 
 const setupCanvas = (canvasElement,analyserNodeRef) => {
 	// create drawing context
@@ -24,19 +29,32 @@ const setupCanvas = (canvasElement,analyserNodeRef) => {
     distanceDivider = 6;
 	// create a gradient that runs top to bottom
 	//gradient = utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"blue"},{percent:.25,color:"green"},{percent:.5,color:"yellow"},{percent:.75,color:"red"},{percent:1,color:"magenta"}]);
-    gradient = utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"blue"},{percent:1,color:"magenta"}]);
+    //gradient = utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"rgb(33, 32, 32)"},{percent:.25,color:"rgb(45, 45, 45)"},{percent:1,color:"rgb(79, 77, 76)"}]); 79, 77, 76
 	// keep a reference to the analyser node
 	analyserNode = analyserNodeRef;
 	// this is the array where the analyser data will be stored
     audioData = new Uint8Array(analyserNode.fftSize/2);
-    lastFrame = (new Date()).getTime();
+    
+    
+    //lastFrame = (new Date()).getTime();
+    //let boltFlashDuration = 0.25;
+    //let boltFadeDuration = 0.25;
+    // totalBoltDuration = boltFlashDuration + boltFadeDuration;
+    // currentDurration = 0;
 
-    let boltFlashDuration = 0.25;
+    rainThemes = {
+        natual : {
+            backrondGradient : utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"rgb(33, 32, 32)"},{percent:.25,color:"rgb(45, 45, 45)"},{percent:1,color:"rgb(79, 77, 76)"}]),
+            lightningColor : utils.createVector3(255,255,255),
+            rainColor : utils.createVector3(255,255,255)
+        },
+        evil : {
+            backrondGradient : utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"rgb(0, 0, 0)"},{percent:.25,color:"rgb(89, 17, 17)"},{percent:1,color:"rgb(161, 22, 22)"}]),
+            lightningColor : utils.createVector3(255, 0, 0),
+            rainColor : utils.createVector3(99, 0, 0)
+        }
+    }
 
-    let boltFadeDuration = 0.25;
-
-    totalBoltDuration = boltFlashDuration + boltFadeDuration;
-    currentDurration = 0;
     rainDrops = [];
 	
     rainType = {
@@ -53,9 +71,12 @@ const setupCanvas = (canvasElement,analyserNodeRef) => {
     };
 
     raindropCount = environment.rainType.count;
+    //currentSceneTheme = rainThemes.natualTheme;
 
 }
 
+let currentSceneTheme;
+let rainThemes; 
 
 
 
@@ -66,23 +87,35 @@ const draw = (params={},fps) => {
 	analyserNode.getByteFrequencyData(audioData);
 	// OR
 	//analyserNode.getByteTimeDomainData(audioData); // waveform data
-	
-	// 2 - draw background
+
+    // 2 - draw background
+    
+    
+
     ctx.save();
-    ctx.fillStyle = "black";
-    console.log(1/fps * 10);
-	ctx.globalAlpha = 1/fps * 10;
-    ctx.fillRect(0,0,canvasWidth, canvasHeight);
-    ctx.restore();
-	/*	
-	// 3 - draw gradient
-    if(params.showGradient){
-        ctx.save();
-        ctx.fillStyle = gradient;
-        ctx.globalAlpha = .3;
+    // 3 - draw gradient
+    if(params.showBackground){
+        
+        ctx.fillStyle = currentSceneTheme.backrondGradient;
+        ctx.globalAlpha = 1/fps * 10;
         ctx.fillRect(0,0,canvasWidth,canvasHeight);
-        ctx.restore();
+        //ctx.restore();
     }
+    else
+    {
+        //ctx.save();
+        ctx.fillStyle = "black";
+        //console.log(1/fps * 10);
+        ctx.globalAlpha = 1/fps * 10;
+        ctx.fillRect(0,0,canvasWidth, canvasHeight);
+    }
+    ctx.restore();
+	
+	
+
+    	
+	
+    /*
     else
     {
         ctx.save();
@@ -92,9 +125,8 @@ const draw = (params={},fps) => {
         ctx.restore();
     }
     */
-
     
-	//console.log(audioData);
+
             
     // Audio Data, analyising beat
     let totalLoudness =  audioData.reduce((total,num) => total + num);
@@ -121,21 +153,14 @@ const draw = (params={},fps) => {
     beatCondition = conditionChecks[0] /*|| conditionChecks[1]*/;
     //beatCondition = (((averageLoudness > 135)) || ((loudnessAt2K > 150) /*&& (currentDurration > totalBoltDuration)*/));
 
-	// 4 - draw lightning
-	if(params.showLightning && beatCondition) {
-       
-        
 
-        let flashPercentage =  (averageLoudness - loudnessThreshold) / (maxRangeLoud - loudnessThreshold);
-
-        if(params.showFlash) flashOpacity = flashPercentage * 0.5;
-        if(flashOpacity > 0.5) flashOpacity = 0.5;
+    // Popluate lightning Strikes
+    if(params.showLightning && (beatCondition || params.constLight)) {
 
         //console.log(`Avg L: ${averageLoudness} Flash % : ${flashPercentage} Flash Op ${flashOpacity}`);
 
-        ctx.save();
-        ctx.fillStyle = `rgba(255,255,255,0.50)`;
-        ctx.strokeStyle = `rgba(0,0,0,0.50)`;
+        //ctx.save();
+        
 
         // Entire Matrix of lightning strikes segments/lines
         lightningStrikeLines = [];
@@ -144,34 +169,53 @@ const draw = (params={},fps) => {
             lightningStrikeLines.push([]);
 
         }
+    }
 
+    // If the song is playing and at least one of the params are active loop through the song sameple
+    if(averageLoudness > 0 && (params.showLightning || params.showRain))
+    {
+        let strikeSamples;
+        let loopStrikeCounter;
         
         // Add audio data to the lightning strikes
-        let strikeSamples = Math.round(audioData.length/realitiveInputedStrikes);
-        let loopStrikeCounter = -1;
-        for (let i = 0; i < audioData.length; i++) {
-            let checkLoopBranch = (i % strikeSamples)
-            if (checkLoopBranch == 0)
-            {
-                loopStrikeCounter++;
-            }
-
-            
-            // Ensurese no empty data is added
-            if(audioData[i] > 0)
-            {
-                lightningStrikeLines[loopStrikeCounter].push({xEnd: 0, yEnd: 0, distance: audioData[i]});
-            }
+        if (params.showLightning && (beatCondition || params.constLight))
+        {
+            strikeSamples = Math.round(audioData.length/realitiveInputedStrikes);
+            loopStrikeCounter = -1;
         }
 
+        for (let i = 0; i < audioData.length; i++) {
+            
+            // Create audio data for lightning strikes
+            if (params.showLightning && (beatCondition || params.constLight))
+            {
+                let checkLoopBranch = (i % strikeSamples)
+                if (checkLoopBranch == 0)
+                {
+                    loopStrikeCounter++;
+                }
+                
+                // Ensurese no empty data is added
+                if(audioData[i] > 0)
+                {
+                    lightningStrikeLines[loopStrikeCounter].push({xEnd: 0, yEnd: 0, distance: audioData[i]});
+                }
+            }
+        }
+    }
+
+
+	// Draw the lightning
+	if(params.showLightning && (beatCondition ||  params.constLight)) {
+       
         // Populate the lightning with distances and positions
         // Also Draw it Lightning
         ctx.save();
-        ctx.strokeStyle = "white";
-        
+        //ctx.strokeStyle = "white";
+        ctx.fillStyle = `rgb(${currentSceneTheme.lightningColor.x}, ${currentSceneTheme.lightningColor.y}, ${currentSceneTheme.lightningColor.z}, 0.75)`;
+        ctx.strokeStyle = `rgb(${currentSceneTheme.lightningColor.x}, ${currentSceneTheme.lightningColor.y}, ${currentSceneTheme.lightningColor.z}, 0.75)`;
         ctx.lineWidth = 1;
-        
-        
+
         let xStart = canvasWidth/lightningStrikeLines.length;
         let yStart = canvasHeight/16;
         
@@ -180,8 +224,9 @@ const draw = (params={},fps) => {
             
             let lightningDis = (j *  xStart) + xStart;
             let totalDistance = 0;
-            let currentX = utils.getRandom(lightningDis - xStart/2, lightningDis + xStart/2);
+            let currentX = utils.getRandom(lightningDis - (xStart/2), lightningDis + (xStart/2));
             let currentY = utils.getRandom(0, yStart);
+            ctx.save();
             ctx.beginPath();
             ctx.lineTo(currentX,currentY);
 
@@ -209,7 +254,7 @@ const draw = (params={},fps) => {
             }
             totalDistance  = (totalDistance/(200 * lightningStrikeLines[j].length))
             console.log(totalDistance);
-            let widthPercentage =  Math.abs(totalDistance  - 10) / (20 - 10);
+            //let widthPercentage =  Math.abs(totalDistance  - 10) / (20 - 10);
             //if (widthPercentage>1) console.log(lightningStrikeLines[j]);
             //console.log(totalDistance/200);
             ctx.lineWidth = Math.pow(7.5,totalDistance);
@@ -217,6 +262,7 @@ const draw = (params={},fps) => {
             ctx.stroke();
 
             ctx.closePath();
+            ctx.restore();
         }
 
         /*
@@ -238,21 +284,33 @@ const draw = (params={},fps) => {
             ctx.strokeRect(margin + i * (barWidth + barSpacing), canvasHeight, barWidth, -(barHeight - 256 + audioData[i]));
         }
         */
-        ctx.restore();
+        //ctx.restore();
     }
 
     // Draw the flash
-    if (flashOpacity > 0.0 && params.showFlash) {
-        ctx.fillStyle = `rgba(255, 255, 255, ${flashOpacity})`;
-        ctx.fillRect(0.0, 0.0, window.innerWidth, window.innerHeight);
-        flashOpacity = Math.max(0.0, flashOpacity - 2.0);
+    if(params.showFlash && beatCondition)
+    {
+        // Set the flash ammount based on beat
+        let flashPercentage =  (averageLoudness - loudnessThreshold) / (maxRangeLoud - loudnessThreshold);
+
+        if(params.showFlash) flashOpacity = flashPercentage * 0.5;
+        if(flashOpacity > 0.6) flashOpacity = 0.6;
+
+        // Draw the flash
+        //if (flashOpacity > 0.0 && params.showFlash) {
+            ctx.save();
+            ctx.fillStyle = `rgba(${currentSceneTheme.lightningColor.x}, ${currentSceneTheme.lightningColor.y}, ${currentSceneTheme.lightningColor.z}, ${flashOpacity})`;
+            ctx.fillRect(0.0, 0.0, window.innerWidth, window.innerHeight);
+            flashOpacity = Math.max(0.0, flashOpacity - 2.0);
+            ctx.restore();
+        //}
     }
     else
     {
         flashOpacity = 0;
     }
 
-
+    
 	// 5 - draw circles
     if(params.showRain && beatCondition)
     {
@@ -262,7 +320,8 @@ const draw = (params={},fps) => {
 
         ctx.save();
         ctx.globalAlpha = 1;
-        drawRain();
+        let color = `rgb(${currentSceneTheme.rainColor.x}, ${currentSceneTheme.rainColor.y}, ${currentSceneTheme.rainColor.z})`; 
+        drawRain(color);
         ctx.restore();
     }
 
@@ -282,66 +341,6 @@ const draw = (params={},fps) => {
     return {xEnd: xFinal, yEnd: yFinal, distance: distance};
   }
   
-
-    // 6 - bitmap manipulation
-	// TODO: right now. we are looping though every pixel of the canvas (320,000 of them!), 
-	// regardless of whether or not we are applying a pixel effect
-	// At some point, refactor this code so that we are looping though the image data only if
-	// it is necessary
-
-	// A) grab all of the pixels on the canvas and put them in the `data` array
-	// `imageData.data` is a `Uint8ClampedArray()` typed array that has 1.28 million elements!
-	// the variable `data` below is a reference to that array 
-	let imageData = ctx.getImageData(0,0,canvasWidth,canvasHeight);
-    let data = imageData.data;
-    let length = data.length;
-    let width = imageData.width;
-	// B) Iterate through each pixel, stepping 4 elements at a time (which is the RGBA for 1 pixel)
-    for (let i = 0; i < length; i += 4) {
-        // C) randomly change every 20th pixel to red
-        if(params.showNoise && Math.random() < .05){
-			// data[i] is the red channel
-			// data[i+1] is the green channel
-			// data[i+2] is the blue channel
-			// data[i+3] is the alpha channel
-			data[i] = data[i+1] = data[i+2] = 0; // zero out the red and green and blue channels
-			//data[i] = 255; // make the red channel 100% red
-            data[i+2] = 255;
-        } // end if
-
-        if(params.showInvert){
-            let red = data[i], green = data[i+1], blue = data[i+2];
-            data[i] = 255 - red;
-            data[i + 1] = 255 - green;
-            data[i + 2] = 255 - blue;
-            // data[i+3] is alpha
-        }
-    } // end for
-
-
-    if(params.showEmboss){
-        for(let i = 0; i < length; i++) {
-            if(i%4 == 3) continue; // skip alpha
-            data[i] = 127 + 2*data[i] - data[i+4] - data[i + width*4];
-        }
-    }
-	
-	// D) copy image data back to canvas
-    ctx.putImageData(imageData,0,0);
-    
-    /*
-    //let minLoudness =  Math.min(...audioData); // ooh - the ES6 spread operator is handy!
-    // let maxLoudness =  Math.max(...audioData); // ditto!
-    // Now look at loudness in a specific bin
-    // 22050 kHz divided by 128 bins = 172.23 kHz per bin
-    // the 12th element in array represents loudness at 2.067 kHz
-    console.log("-----Audio Stats-----"); 
-    console.log(`averageLoudness = ${averageLoudness}`);
-    //console.log(`minLoudness = ${minLoudness}`);
-    //console.log(`maxLoudness = ${maxLoudness}`);
-    console.log(`loudnessAt2K = ${loudnessAt2K}`);
-    console.log("---------------------");
-    */
 	
 };
 
@@ -360,9 +359,12 @@ const draw = (params={},fps) => {
       this.acceleration = utils.vectorAddition(this.acceleration, this.wind);
     }
   
-    draw() {
+    draw(color) {
       const { x, y } = this.location;
-      return utils.drawArc(ctx,x, y, this.radius, true);
+      const lineWidth=1;
+      //const color = `rgb(${currentSceneTheme.rainColor})`
+      console.log (color);
+      return utils.drawArc(ctx,x, y, this.radius, color,lineWidth,color, true);
     }
   
     fall() { 
@@ -390,12 +392,12 @@ const draw = (params={},fps) => {
   
   
   // continuous animation loop
-  const drawRain = function() {
+  const drawRain = function(color) {
 
     for (let i = 0; i < rainDrops.length; i++) {
          
       rainDrops[i].fall();
-      rainDrops[i].draw();
+      rainDrops[i].draw(color);
       if(rainDrops[i].location.y > canvasHeight || rainDrops[i].location.x > canvasWidth)
       {
         rainDrops.splice(i,1);
@@ -412,6 +414,10 @@ Public Variables
 */
 ///
 
+const setTheme = (theme) => {
+    currentSceneTheme =  rainThemes[theme];
+}
+
 const setStrike = (value) => {
     value = Number(value); // make sure that it's a Number rather than a String
     lightningStrikeLines = [];
@@ -425,4 +431,4 @@ const setRandom = (value) => {
     lightningRandomness = utils.lerp((Math.PI/2), 0, value);
 };
 
-export {setupCanvas,draw,setRandom, setStrike};
+export {setupCanvas,draw,setRandom, setStrike, setTheme};

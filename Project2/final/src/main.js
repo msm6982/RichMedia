@@ -7,17 +7,34 @@
 // In this instance, we feel the code is more readable if written this way
 // If you want to re-write these as ES6 arrow functions, to be consistent with the other files, go ahead!
 const drawParams = {
-  showGradient : false,
+  showBackground : true,
   showLightning: true,
   showRain     : false,
   showFlash    : true,
-  showNoise    : false,
-  showInvert   : false,
-  showEmboss   : false
+  constLight : false
 }
 
 const fps = 60;
 let audioData = null;
+
+// HTML Elements
+let themeSelect = null;
+let volumeSlider = null;
+let volumeLabel = null;
+let trackSelect = null;
+let playButton = null;
+let lightningSlider = null;
+let lightningLabel = null;
+let lightNumSlider = null;
+let lightNumLabel = null;
+let cbRain = null;
+let cbBackground = null;
+let cbLightning = null;
+let cbFlash = null;
+let cbConstLight = null;
+let canvasElement = null;
+
+
 
 import * as utils from './utils.js';
 import * as audio from './audio.js';
@@ -33,15 +50,69 @@ function init(){
 	console.log("init called");
 	console.log(`Testing utils.getRandomColor() import: ${utils.getRandomColor()}`);
 	audio.setupWebaudio(DEFAULTS.sound1);
-  let canvasElement = document.querySelector("canvas"); // hookup <canvas> element
-	setupUI(canvasElement);
+  canvasElement = document.querySelector("canvas"); // hookup <canvas> element
+	
+  // Controls 
+  playButton = document.querySelector("#playButton");
+  trackSelect = document.querySelector("#trackSelect");
+  themeSelect = document.querySelector("#themeSelect");
+  volumeSlider = document.querySelector("#volumeSlider");
+  lightningSlider = document.querySelector("#lightningRadomness");
+  lightNumSlider = document.querySelector("#lightNumSlider");
+
+  // Lables
+  volumeLabel = document.querySelector("#volumeLabel");
+  lightningLabel = document.querySelector("#lightningDisplay");
+  lightNumLabel = document.querySelector("#lightNumLabel");
+  
+
+  // Checkboxes
+  cbBackground = document.querySelector("#backgroundCB");
+  cbRain = document.querySelector("#rainCB");
+  cbFlash = document.querySelector("#flashCB");
+  cbLightning = document.querySelector("#lightningCB");
+  cbConstLight = document.querySelector("#constantLightningCB");
+  
+
+  
+  setupUI();
+
+  
+
+
   audioData = new Uint8Array(audio.analyserNode.fftSize/2);
   canvas.setupCanvas(canvasElement, audio.analyserNode);
+  setupSceneDefaults()
   loop();
 }
 
 
-function setupUI(canvasElement){
+function setupSceneDefaults(){
+
+  setVolumeMain(volumeSlider.value);
+  setThemeMain(themeSelect.value);
+  setTrackMain(trackSelect.value);
+  setLightSliderMain(lightningSlider.value);
+  setLightAmmountMain(lightNumSlider.value);
+  
+  cbRain.value = drawParams.showRain;
+  cbRain.checked = drawParams.showRain;
+
+  cbBackground.value = drawParams.showBackground;
+  cbBackground.checked = drawParams.showBackground;
+
+  cbFlash.value = drawParams.showFlash;
+  cbFlash.checked = drawParams.showFlash;
+
+  cbLightning.value = drawParams.showLightning;
+  cbLightning.checked = drawParams.showLightning;
+
+  cbConstLight.value = drawParams.constLight;
+  cbConstLight.checked - drawParams.constLight;
+
+}
+
+const setupUI = () => {
   // A - hookup fullscreen button
   const fsButton = document.querySelector("#fsButton");
 	
@@ -51,14 +122,11 @@ function setupUI(canvasElement){
     utils.goFullscreen(canvasElement);
   };
 
-  const playButton = document.querySelector("#playButton");
-
+  // Pause and play on click
   playButton.onclick = e => {
     
     console.log (`audioCtx.state before = ${audio.audioCtx.state}`)
     
-    
-
     if(audio.audioCtx.state == "suspended"){
         audio.audioCtx.resume();
     }
@@ -74,41 +142,14 @@ function setupUI(canvasElement){
     }
   };
 
-  let volumeSlider = document.querySelector("#volumeSlider");
-  let volumeLabel = document.querySelector("#volumeLabel");
-
-  let lightningSlider = document.querySelector("#lightningRadomness");
-  let lightningLabel = document.querySelector("#lightningDisplay");
-
-  let lightNumSlider = document.querySelector("#lightNumSlider");
-  let lightNumLabel = document.querySelector("#lightNumLabel");
-
   // oninput event to volume slider
-  volumeSlider.oninput = e => {
-    // set the gain
-    audio.setVolume(e.target.value);
-    // update value of label to match value of slider
-    volumeLabel.innerHTML = Math.round((e.target.value/2 * 100));
-  };
+  volumeSlider.oninput = e => { setVolumeMain(e.target.value); };
   
-  // oninput event to lightning strike Slider
-  lightningSlider.oninput = e => {
-    // set the gain
-    canvas.setRandom(e.target.value);
-    // update value of label to match value of slider
-    lightningLabel.innerHTML = Math.round((e.target.value * 100));
-  };
+  // on input event to lightning random strike Slider
+  lightningSlider.oninput = e => { setLightSliderMain(e.target.value); };
 
-  console.log(lightNumSlider.value);
-  canvas.setStrike(lightNumSlider.value);
-  lightNumLabel.innerHTML = lightNumSlider.value;
-   // oninput event to lightning strike Slider
-   lightNumSlider.oninput = e => {
-    // set the gain
-    canvas.setStrike(e.target.value);
-    // update value of label to match value of slider
-    lightNumLabel.innerHTML =  `${e.target.value * 10} %`;
-  };
+  // on input event to lightning ammount strike Slider
+  lightNumSlider.oninput = e => { setLightAmmountMain(e.target.value); };
 
   // set value of label to match initial value of slider
   volumeSlider.dispatchEvent(new Event("input"));
@@ -116,47 +157,66 @@ function setupUI(canvasElement){
   lightNumSlider.dispatchEvent(new Event("input"));
 
   // hookup track select
-  let trackSelect = document.querySelector("#trackSelect");
+  trackSelect.onchange = e => { setTrackMain(e.target.value) }
 
-  trackSelect.onchange = e => {
-    audio.loadSoundFile(e.target.value);
-    // pause the current track if playing
-    if(playButton.dataset.playing == "yes") {
-        playButton.dispatchEvent(new MouseEvent("click"));
+  // hookup theme select
+  themeSelect.onchange = e => { setThemeMain(e.target.value); }
+
+
+  // Checkbox change
+  cbBackground.onclick = function(e) { drawParams.showBackground = e.target.checked; }
+
+  cbLightning.onclick = function(e) { 
+    drawParams.showLightning = e.target.checked; 
+    if(drawParams.constLight && e.target.checked == false)
+    {
+      drawParams.constLight = false;
+      cbConstLight.value = false;
+      cbConstLight.checked = false;
     }
   }
 
-  document.querySelector("#gradientCB").onclick = function(e) {
-    drawParams.showGradient = e.target.checked;
+  cbRain.onclick = function(e) { drawParams.showRain = e.target.checked; }
+
+  cbFlash.onclick = function(e) { 
+    drawParams.showFlash = e.target.checked; 
+    // Dont flash with constant lightning
+    if(drawParams.constLight && e.target.checked == true)
+    {
+      drawParams.constLight = false;
+      cbConstLight.value = false;
+      cbConstLight.checked = false;
+    } 
   }
 
-  document.querySelector("#lightningCB").onclick = function(e) {
-    drawParams.showLightning = e.target.checked;
+  cbConstLight.onclick = function(e) { 
+    drawParams.constLight = e.target.checked; 
+
+    
+
+    
+    if(e.target.checked == true)
+    {
+      // Turn on ligthning
+      drawParams.showLightning = true;
+      cbLightning.value = true;
+      cbConstLight.checked = true;
+
+      // Dont flash with constant lightning
+      if(drawParams.showFlash)
+      {
+        drawParams.showFlash = false;
+        cbFlash.value = false;
+        cbFlash.checked = false;
+      } 
+      
+    } 
   }
 
-  document.querySelector("#rainCB").onclick = function(e) {
-    drawParams.showRain = e.target.checked;
-  }
-
-  document.querySelector("#flashCB").onclick = function(e) {
-    drawParams.showFlash = e.target.checked;
-  }
-
-  document.querySelector("#noiseCB").onclick = function(e) {
-    drawParams.showNoise = e.target.checked;
-  }
-  
-  document.querySelector("#invertCB").onclick = function(e) {
-    drawParams.showInvert = e.target.checked;
-  }
-
-  document.querySelector("#embossCB").onclick = function(e) {
-    drawParams.showEmboss = e.target.checked;
-  }
 	
 } // end setupUI
 
-function loop(){
+const loop = () => {
     /* NOTE: This is temporary testing code that we will delete in Part II */
         //requestAnimationFrame(loop);
         setTimeout(loop, 1000/fps);
@@ -193,5 +253,38 @@ function loop(){
         
     }
 
+    // Helper Functions called after json files loads
+    const setVolumeMain = (value) => {
+      audio.setVolume(value);
+      // update value of label to match value of slider
+      volumeLabel.innerHTML = Math.round((value/2 * 100));
+    }
+
+    const setThemeMain = (value) => {
+      canvas.setTheme(value);
+    }
+
+    const setTrackMain = (value) => {
+
+      audio.loadSoundFile(value);
+      // pause the current track if playing
+      if(playButton.dataset.playing == "yes") {
+        playButton.dispatchEvent(new MouseEvent("click"));
+      }
+    }
+
+    const setLightSliderMain = (value) => {
+      
+      canvas.setRandom(value);
+      // update value of label to match value of slider
+      lightningLabel.innerHTML = Math.round((value * 100));
+    }
+
+    //
+    const setLightAmmountMain = (value) => {
+      canvas.setStrike(value);
+      // update value of label to match value of slider
+      lightNumLabel.innerHTML =  `${value * 10} %`;
+    }
 
 export {init};

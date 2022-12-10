@@ -24,7 +24,7 @@
 		</section>
 		
 		<section>
-			Volume: <input type="range" id="volumeSlider" min="0" max="2" value="1" step="0.01">
+			Volume: <input type="range" id="volumeSlider" min="0" max="2" value="0.25" step="0.01">
 			<span id="volumeLabel">???</span>
 		</section>
 		<section>
@@ -35,6 +35,15 @@
 			Lightning Stikes: <input type="range" id="lightNumSlider" min="1" max="10" value="10" step="1">
 			<span id="lightNumLabel">???</span>
 		</section>
+
+		<section>
+			<label>Scene Theme:  
+				<select id = "themeSelect">
+					<option value="natual" selected>Natural</option>
+					<option value="evil">Evil</option>
+				</select>
+			</label>
+		</section>
 	</div>
 
 	<section>
@@ -44,11 +53,9 @@
 	</section>
 
 	<section>
-		<span><input type="checkbox" id="gradientCB"><label for="gradientCB">Show Gradient</label></span>
+		<span><input type="checkbox" id="backgroundCB"><label for="backgroundCB">Show Background!</label></span>
+		<span><input type="checkbox" id="constantLightningCB"><label for="constantLightningCB">Constant Lightning!</label></span>
 		<!-- we'll use this 4th checkbox soon! -->
-		<span><input type="checkbox" id="noiseCB"><label for="noiseCB">Show Noise</label></span>
-		<span><input type="checkbox" id="invertCB"><label for="invertCB">Show Inversion</label></span>
-		<span><input type="checkbox" id="embossCB"><label for="embossCB">Show Emboss</label></span>
 	</section>
 
 </main>
