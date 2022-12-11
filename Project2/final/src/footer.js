@@ -1,7 +1,7 @@
 const template = document.createElement("template");
 template.innerHTML = `
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-<div class="hero-footer has-text-white has-text-weight-bold">My attribute</div>
+<div class="hero-footer has-text-centered has-text-white has-text-weight-bold has-background-warning pt-3 pb-3">My attribute</div>
 
 `;
 // Web Componet that contains footer infomation

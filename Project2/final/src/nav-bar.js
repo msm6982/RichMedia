@@ -6,8 +6,8 @@ template.innerHTML = `
 <nav class="navbar has-shadow is-white">
     <!-- log / brand -->
     <div class="navbar-brand">
-      <a class="navbar-item" href="home.html">
-        <i class="fas fa-solid fa-feather"></i>
+      <a class="navbar-item" href="index.html">
+      <i class="fas fa-bolt"></i>
       </a>
       <a class="navbar-burger" id="burger">
         <span></span>

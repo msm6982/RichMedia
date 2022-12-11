@@ -78,7 +78,7 @@ const init = (json) => {
   setupUI();
 
   audioData = new Uint8Array(audio.analyserNode.fftSize/2);
- 
+
   //setupSceneDefaults()
  
   loop();
@@ -94,15 +94,15 @@ const loadDropdown = (jsonControls, jsonDefaults) => {
 
   for(let dropdown of dropdowns) { dropdown.innerHTML = ""; }
 
-  rainSelect.innerHTML = jsonControls["rainDropDown"].map(option => `<option value="${option.value}">${option.title}</option>`).join(" ");
+  rainSelect.innerHTML = jsonControls["rainDropDown"].map(option => `<option  class="dropdown-item" value="${option.value}">${option.title}</option>`).join(" ");
   rainSelect.value = jsonDefaults.rain;
   setRainTypeMain(rainSelect.value);
 
-  trackSelect.innerHTML = jsonControls["tracks"].map(option => `<option value="${option.value}">${option.title}</option>`).join(" ");
+  trackSelect.innerHTML = jsonControls["tracks"].map(option => `<option  class="dropdown-item" value="${option.value}">${option.title}</option>`).join(" ");
   trackSelect.value = jsonDefaults.track;
   setTrackMain(trackSelect.value);
 
-  themeSelect.innerHTML = jsonControls["sceneTheme"].map(option => `<option value="${option.value}">${option.title}</option>`).join(" ");
+  themeSelect.innerHTML = jsonControls["sceneTheme"].map(option => `<option  class="dropdown-item" value="${option.value}">${option.title}</option>`).join(" ");
   themeSelect.value = jsonDefaults.theme;
   setThemeMain(themeSelect.value);
 }
@@ -112,7 +112,7 @@ const loadCheckBoxes = (jsonParams, jsonCheckBoxes, checkBoxeSection) => {
   drawParams = jsonParams;
 
   // DOM creation
-  checkBoxeSection.innerHTML =  jsonCheckBoxes.map(cb => `<span><input type="checkbox" id="${cb.id}"><label for="${cb.id}">${cb.title}</label></span>`).join(" ");
+  checkBoxeSection.innerHTML =  jsonCheckBoxes.map(cb => `<span><input type="checkbox" class="is-centered has-text-centered m-2" id="${cb.id}"><label for="${cb.id}">${cb.title}</label></span>`).join(" ");
 
   // Checkboxes Id selection
   cbBackground = document.querySelector("#backgroundCB");

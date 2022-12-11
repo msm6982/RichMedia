@@ -1,64 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<title>Audio Visualizer</title>
-    <link href="./styles/default-style.css" type="text/css" rel="stylesheet">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Storm Audio Visualizer</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer">
+	<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="styles/default-style.css">
+
 	<script src="./src/loader.js" type="module"></script>
+	<script src="src/web-comp-loader.js" type="module"></script>
+
+	<style>
+		body{
+			font-family: 'Nunito', sans-serif;
+
+		}
+	</style>
 </head>
 <body>
+	<nav-bar data-currentpage = "app"></nav-bar>
 <main>
-	<canvas width="800" height="400"></canvas>
-	<div id="controls">
-		<section>
-			<button id="playButton" data-playing="no"></button>
-			<button id="fsButton">Full Screen</button>
-			<button id="muteButton">Mute</button>
-
-			<label>Track: 
-				<select id="trackSelect">
-					???
-				</select>
-			</label>
-		</section>
+		<div class="columns is-centered">
+			<div class="column has-text-centered has-text-dark"><page-title data-title="Storm-AV" data-subtitle="Control the storm and the tunes below!"></page-title></div>
+		</div>
+		<p class="subtitle has-text-centered has-text-danger">Epilepsy Risk: Toggle Flash, Lightning, and/or Rain to reduce Risk</p> 
+		<div class="columns is-centered">
+			<canvas class="column is-centered is-7" width="800" height="400"></canvas>
+		</div>
 		
-		<section>
-			Volume: <input type="range" id="volumeSlider" min="0" max="2" step="0.01">
-			<span id="volumeLabel">???</span>
-		</section>
-		<section>
-			Lightning Randomness: <input type="range" id="lightningRadomness" min="0" max="1" step="0.01">
-			<span id="lightningDisplay">???</span>
-		</section>
-		<section>
-			Lightning Stikes: <input type="range" id="lightNumSlider" min="1" max="10" step="1">
-			<span id="lightNumLabel">???</span>
-		</section>
 
-		<section>
-			<label>Scene Theme:  
-				<select id = "themeSelect">
-					???
-				</select>
-			</label>
 
-			<label>Rain Type:  
-				<select id = "rainSelect">
-					???
-				</select>
-			</label>
+		<div id="controls" class="box">
+			<div class="columns is-centered is-half has-text-centered">
+				<button id="playButton" class="column is-centered is-3 m-1 button is-normal" data-playing="no"></button>
+				<button id="fsButton" class="column is-centered is-3 m-1 button is-normal">Full Screen</button>
+				<button id="muteButton" class="column is-centered is-3 m-1 button is-normal">Mute</button>
 
-		</section>
-	</div>
+				
+			</div>
+		
 
-	<section id="cb-1" >
-		???
-	</section>
 
-	<section id="cb-2">
-		???
-	</section>
+			<div class="columns is-centered is-half has-text-centered">
+				
+				
+				<div class="slider column is-centered is-3 is-normal">
+					Volume: <input type="range"  id="volumeSlider" min="0" max="2" step="0.01">
+					<span id="volumeLabel">???</span>
+				</div>
+				<div class="slider column is-centered is-3 is-normal">
+					Lightning Randomness: <input type="range"  id="lightningRadomness" min="0" max="1" step="0.01">
+					<span id="lightningDisplay">???</span>
+				</div>
 
+				<div class="slider column is-centered is-3 is-normal">
+					Lightning Stikes: <input type="range"  id="lightNumSlider" min="1" max="10" step="1">
+					<span id="lightNumLabel">???</span>
+				</div>
+			</div>
+
+			<div class="columns is-centered is-half has-text-centered">
+			
+				<label class=" column is-centered is-3 is-normal">Scene Theme:  
+					<select id = "themeSelect" class ="dropDown has-text-centered is-normal">
+
+					</select>
+				</label>
+
+				<label class=" column is-centered is-3 is-normal">Rain Type:  
+					<select id = "rainSelect" class ="dropDown has-text-centered is-normal">
+
+					</select>
+				</label>
+				<label class=" column is-centered is-3 is-normal">Track: 
+					<select id="trackSelect" class ="dropDown has-text-centered is-normal">
+
+					</select>
+				</label>
+
+			</div>
+		
+
+			<div id="cb-1" class="columns checkbox is-centered is-half has-text-centered">
+
+			</div>
+
+			<div id="cb-2">
+
+			</div>
+		</div>
+	
+
+	<page-footer data-footer="msm6982@rit.edu Updated 2022"></page-footer>
 </main>
 </body>
 </html>

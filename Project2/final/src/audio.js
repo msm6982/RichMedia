@@ -24,6 +24,8 @@ const setupWebaudio = (filePath) => {
     // 2 - this creates an <audio> element
     element = new Audio();
 
+
+    //console.log(element.duration);
     // 3 - have it point at a sound file
     loadSoundFile(filePath);
 
@@ -55,6 +57,7 @@ const setupWebaudio = (filePath) => {
     sourceNode.connect(analyserNode);
     analyserNode.connect(gainNode);
     gainNode.connect(audioCtx.destination);
+    
 };
 
 const loadSoundFile = (filePath) => {
@@ -73,5 +76,6 @@ const setVolume = (value) => {
     value = Number(value); // make sure that it's a Number rather than a String
     gainNode.gain.value = value;
 };
+
 
 export {audioCtx,setupWebaudio,playCurrentSound,pauseCurrentSound,loadSoundFile,setVolume, analyserNode};

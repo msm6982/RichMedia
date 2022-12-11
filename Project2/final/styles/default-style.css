@@ -4,28 +4,31 @@ body {
 }
 
 canvas {
-	margin-left: 1rem;
-	margin-top: 1rem;
-	margin-bottom: 1rem;
+	margin-top: 2.5rem;
+	margin-bottom: 2.5rem;
 	box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
 	background: #fafafa;
 }
 
+
+.fa { font-family: 'FontAwesome' !important; }
+
 #controls{
   margin-left: 1rem;
+  margin-right: 1rem;
 }
 
-#volumeLabel{
-  margin-left: 1rem;
+.dropDown{
+  width: 8rem;
 }
 
 section{
   margin-bottom: 1rem;
 }
 
-#playButton{
+#playButton,#fsButton, #muteButton{
   font-size: 1.2rem;
-  width: 6rem;
+  width: 8rem;
 }
 
 button[data-playing="yes"]:after{
@@ -34,9 +37,4 @@ button[data-playing="yes"]:after{
 
 button[data-playing="no"]:after{
   content: "Play";
-}
-
-#fsButton{
-  font-size: 1.2rem;
-  width: 8rem;
 }
