@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haiku Generator</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/rita"></script>
+  
+  <script src="src/web-comp-loader.js" type="module"></script>
+
+  <style>
+    
+    #content-holder{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(200px,.8fr));
+      align-items: center;
+      grid-gap: 1em;
+    }
+
+    #element-card-holder {
+    display: grid;
+      grid-template-columns: repeat(3, minmax(200px,1fr));
+      
+      grid-gap: 0.5em;
+    }
+    @media only screen and (max-width: 1270px)
+    {
+      #content-holder{
+
+      grid-template-columns: repeat(auto-fill, minmax(375px,1fr));
+      
+
+    }
+
+    #element-card-holder {
+
+      grid-template-columns: repeat(auto-fill, minmax(250px,.8fr));
+
+    }
+    }
+   
+    
+   
+  </style>
+
+</head>
+<body>
+  
+  <nav-bar data-currentpage = "home"></nav-bar>
+  
+  <!-- product info -->
+  
+    
+      <div class="columns is-vcentered ">
+        <div class="column">  
+          <div class="hero is-large is-info p-2">
+            <div class="hero-head">
+              <haiku-title data-title="Haiku Generator Home" data-subtitle="Make and save Haikus!<br>
+              Save them for people to see!<br>
+              Embrace Randomness!"></haiku-title>
+            
+            </div>
+            
+            <br>
+
+            <div id="content-holder">
+            <div id="cards">
+              <p class="is-size-4 mb-4 has-text-centered">Here are some generated example Haikus!</p>
+              <div id="element-card-holder">
+                <!-- Search results go here! -->
+              </div>
+            </div>
+              <img class="p-3" src="./images/haiku.jpg" alt="page illistration">
+            </div>
+            <p class="is-small">Image Source: <a href="https://www.grammarly.com/blog/how-to-write-haiku/">Grammarly</a></p>
+            <haiku-footer data-footer="msm6982@rit.edu Updated 2022"></haiku-footer>
+          </div>
+        </div>
+      </div>
+</body>
+</html>
