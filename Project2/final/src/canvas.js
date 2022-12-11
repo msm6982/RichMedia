@@ -10,10 +10,10 @@ let realitiveInputedStrikes;
 
 let lightningStrikeLines;
 let rainType;
-let raindropCount;
 let rainDrops; 
 let environment;
 let flashOpacity = 0; 
+let image;
 // let lastFrame;
 // let totalBoltDuration ;
 // let currentDurration;
@@ -35,6 +35,8 @@ const setupCanvas = (canvasElement,analyserNodeRef) => {
 	// this is the array where the analyser data will be stored
     audioData = new Uint8Array(analyserNode.fftSize/2);
     
+    image = new Image();
+    image.src = "media/window.png";
     
     //lastFrame = (new Date()).getTime();
     //let boltFlashDuration = 0.25;
@@ -43,34 +45,38 @@ const setupCanvas = (canvasElement,analyserNodeRef) => {
     // currentDurration = 0;
 
     rainThemes = {
-        natual : {
+        natural : {
             backrondGradient : utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"rgb(33, 32, 32)"},{percent:.25,color:"rgb(45, 45, 45)"},{percent:1,color:"rgb(79, 77, 76)"}]),
             lightningColor : utils.createVector3(255,255,255),
             rainColor : utils.createVector3(255,255,255)
         },
         evil : {
-            backrondGradient : utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"rgb(0, 0, 0)"},{percent:.25,color:"rgb(89, 17, 17)"},{percent:1,color:"rgb(161, 22, 22)"}]),
+            backrondGradient : utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"rgb(0, 0, 0)"},{percent:.25,color:"rgb(89, 17, 17)"},{percent:.75,color:"rgb(161, 22, 22)"}, {percent:1,color:"rgb(56, 24, 4)"}]),
             lightningColor : utils.createVector3(255, 0, 0),
-            rainColor : utils.createVector3(99, 0, 0)
+            rainColor : utils.createVector3(200, 10, 0)
+        },
+        cartoon : {
+            backrondGradient : utils.getLinearGradient(ctx,0,0,0,canvasHeight,[{percent:0,color:"rgb(38, 38, 41)"},{percent:.40,color:"rgb(35, 31, 87)"}, {percent:1,color:"rgb(13, 56, 9)"}]),
+            lightningColor : utils.createVector3(252, 231, 0),
+            rainColor : utils.createVector3(52, 116, 235)
         }
     }
 
     rainDrops = [];
 	
     rainType = {
-        drizzle: { count: 30, speed: 0.27 },
-        light: { count: 100, speed: 0.3 },
-        medium: { count: 250, speed: 0.4 },
-        downpour: { count: 500, speed: 0.5 },
-        afteshower: { count: 3, speed: 0.4 }
+        drizzle: { count: 30, speed: 0.1 },
+        light: { count: 100, speed: 0.25 },
+        medium: { count: 250, speed: 0.3 },
+        downpour: { count: 500, speed: 0.4 },
+        aftershower: { count: 3, speed: 0.4 }
     };
     
     environment = {
-        wind: utils.createVector(-0.05, 0),
+        wind: utils.createVector(-0.03, 0),
         rainType: rainType.light,
     };
 
-    raindropCount = environment.rainType.count;
     //currentSceneTheme = rainThemes.natualTheme;
 
 }
@@ -87,13 +93,12 @@ const draw = (params={},fps) => {
 	analyserNode.getByteFrequencyData(audioData);
 	// OR
 	//analyserNode.getByteTimeDomainData(audioData); // waveform data
-
-    // 2 - draw background
+    
     
     
 
     ctx.save();
-    // 3 - draw gradient
+    // Draw the background
     if(params.showBackground){
         
         ctx.fillStyle = currentSceneTheme.backrondGradient;
@@ -103,9 +108,7 @@ const draw = (params={},fps) => {
     }
     else
     {
-        //ctx.save();
         ctx.fillStyle = "black";
-        //console.log(1/fps * 10);
         ctx.globalAlpha = 1/fps * 10;
         ctx.fillRect(0,0,canvasWidth, canvasHeight);
     }
@@ -113,18 +116,6 @@ const draw = (params={},fps) => {
 	
 	
 
-    	
-	
-    /*
-    else
-    {
-        ctx.save();
-        ctx.fillStyle = 'black';
-        ctx.globalAlpha = .1;
-        ctx.fillRect(0,0,canvasWidth,canvasHeight);
-        ctx.restore();
-    }
-    */
     
 
             
@@ -149,20 +140,35 @@ const draw = (params={},fps) => {
 
     let conditionChecks = [(averageLoudness > loudnessThreshold), (loudnessAt2K > 220)];
     let beatCondition;
-    //beatCondition = (((loudnessAt2K > 225)) /*|| ((loudnessAt2K > 150) && (currentDurration > totalBoltDuration)*/);
+
     beatCondition = conditionChecks[0] /*|| conditionChecks[1]*/;
-    //beatCondition = (((averageLoudness > 135)) || ((loudnessAt2K > 150) /*&& (currentDurration > totalBoltDuration)*/));
+
+
+    if(params.showRain && rainDrops.length <= environment.rainType.count)
+    {
+        addRain();
+    }
+
+    // Draw any rain in the scene
+    if(rainDrops.length > 0)
+    {
+        ctx.save();
+        ctx.globalAlpha = 1;
+        let color = `rgba(${currentSceneTheme.rainColor.x}, ${currentSceneTheme.rainColor.y}, ${currentSceneTheme.rainColor.z}, 0.75)`; 
+        // Set radius based on the average size
+        let radius = utils.diffInRange(averageLoudness, 60, 170);
+        radius = Math.pow(5.5,radius);
+        //let radius = utils.lerp(0.5, 5, averageLoudness/maxRangeLoud);
+        if(averageLoudness == 0 || !(params.rainPulse)) radius = 1;
+        drawRain(color, params.showRain, radius);
+        ctx.restore();
+    }
 
 
     // Popluate lightning Strikes
     if(params.showLightning && (beatCondition || params.constLight)) {
-
-        //console.log(`Avg L: ${averageLoudness} Flash % : ${flashPercentage} Flash Op ${flashOpacity}`);
-
-        //ctx.save();
         
-
-        // Entire Matrix of lightning strikes segments/lines
+        // Entire array of lightning strikes segments/lines
         lightningStrikeLines = [];
         for (let i = 0; i < realitiveInputedStrikes; i++) {
 
@@ -216,47 +222,38 @@ const draw = (params={},fps) => {
         ctx.strokeStyle = `rgb(${currentSceneTheme.lightningColor.x}, ${currentSceneTheme.lightningColor.y}, ${currentSceneTheme.lightningColor.z}, 0.75)`;
         ctx.lineWidth = 1;
 
-        let xStart = canvasWidth/lightningStrikeLines.length;
+        // Insure that one lightning strike stays on screne
+        let xStart = (lightningStrikeLines.length>1) ? canvasWidth/lightningStrikeLines.length : canvasWidth/2;
         let yStart = canvasHeight/16;
         
+        // Draw each of the lightning strikes 
         for(let j = 0; j < lightningStrikeLines.length; j++)
-        {
-            
+        { 
             let lightningDis = (j *  xStart) + xStart;
             let totalDistance = 0;
-            let currentX = utils.getRandom(lightningDis - (xStart/2), lightningDis + (xStart/2));
-            let currentY = utils.getRandom(0, yStart);
+            let currentSegmentLoc = utils.createVector(utils.getRandom(lightningDis - (xStart/2), lightningDis + (xStart/2)), utils.getRandom(0, yStart))
+
+
             ctx.save();
             ctx.beginPath();
-            ctx.lineTo(currentX,currentY);
+            ctx.lineTo(currentSegmentLoc.x,currentSegmentLoc.y);
 
-            //console.log(lightningStrikeLines[j]);
-            //let totalDistance =  lightningStrikeLines[j].reduce((total,distance: num) => total + num);
-            //let averageDistance =  totalDistance/lightningStrikeLines[j].length;
-            //console.log(averageDistance);
 
             for (let i = 0; i < lightningStrikeLines[j].length; i++)
             {
-                //if(lightningStrikeLines[j][i].distance> 255) console.log(lightningStrikeLines[j][i].distance);
-                //let distancePercent = Math.abs(lightningStrikeLines[j][i].distance) / (3000);
-                lightningStrikeLines[j][i] = createLightningSegment(currentX, currentY, lightningStrikeLines[j][i].distance);
+
+                lightningStrikeLines[j][i] = createLightningSegment(currentSegmentLoc.x, currentSegmentLoc.y, lightningStrikeLines[j][i].distance);
+
                 totalDistance += lightningStrikeLines[j][i].distance;
-                currentX =  lightningStrikeLines[j][i].xEnd;
-                currentY = lightningStrikeLines[j][i].yEnd;
-                //ctx.save();
-                //ctx.stroke();
-                //ctx.lineWidth = (lightningStrikeLines[j].length*(i+1))/10;
-                //console.log(lightningStrikeLines[j][i].distance);
-                ctx.lineTo(lightningStrikeLines[j][i].xEnd, lightningStrikeLines[j][i].yEnd);
-                
-                //ctx.closePath();
-                //ctx.restore();
+
+                currentSegmentLoc = utils.createVector(lightningStrikeLines[j][i].xEnd, lightningStrikeLines[j][i].yEnd);
+
+                ctx.lineTo(currentSegmentLoc.x, currentSegmentLoc.y);
+
             }
+
+            // Set the width of the lighning bolt based on its distance
             totalDistance  = (totalDistance/(200 * lightningStrikeLines[j].length))
-            console.log(totalDistance);
-            //let widthPercentage =  Math.abs(totalDistance  - 10) / (20 - 10);
-            //if (widthPercentage>1) console.log(lightningStrikeLines[j]);
-            //console.log(totalDistance/200);
             ctx.lineWidth = Math.pow(7.5,totalDistance);
 
             ctx.stroke();
@@ -264,27 +261,12 @@ const draw = (params={},fps) => {
             ctx.closePath();
             ctx.restore();
         }
-
-        /*
-        for (let i = 0; i < lightningStrikeLines[j].length; i++)
-        {
-           ctx.lineTo(lightningStrikeLines[j][i].xEnd, lightningStrikeLines[j][i].yEnd);
-        }
-        */
         
-        //ctx.stroke();
 
         ctx.closePath();
         ctx.restore();
 
-        /*
-        for (let i = 0; i < audioData.length; i++) {
-            //if()
-            ctx.fillRect(margin + i * (barWidth + barSpacing), canvasHeight , barWidth, -(barHeight  - 256 + audioData[i]));
-            ctx.strokeRect(margin + i * (barWidth + barSpacing), canvasHeight, barWidth, -(barHeight - 256 + audioData[i]));
-        }
-        */
-        //ctx.restore();
+
     }
 
     // Draw the flash
@@ -296,14 +278,12 @@ const draw = (params={},fps) => {
         if(params.showFlash) flashOpacity = flashPercentage * 0.5;
         if(flashOpacity > 0.6) flashOpacity = 0.6;
 
-        // Draw the flash
-        //if (flashOpacity > 0.0 && params.showFlash) {
-            ctx.save();
-            ctx.fillStyle = `rgba(${currentSceneTheme.lightningColor.x}, ${currentSceneTheme.lightningColor.y}, ${currentSceneTheme.lightningColor.z}, ${flashOpacity})`;
-            ctx.fillRect(0.0, 0.0, window.innerWidth, window.innerHeight);
-            flashOpacity = Math.max(0.0, flashOpacity - 2.0);
-            ctx.restore();
-        //}
+
+        ctx.save();
+        ctx.fillStyle = `rgba(${currentSceneTheme.lightningColor.x}, ${currentSceneTheme.lightningColor.y}, ${currentSceneTheme.lightningColor.z}, ${flashOpacity})`;
+        ctx.fillRect(0.0, 0.0, window.innerWidth, window.innerHeight);
+        flashOpacity = Math.max(0.0, flashOpacity - 2.0);
+        ctx.restore();
     }
     else
     {
@@ -311,20 +291,15 @@ const draw = (params={},fps) => {
     }
 
     
-	// 5 - draw circles
-    if(params.showRain && beatCondition)
-    {
-        addRain();
-    }
-    else if(params.showRain) {
 
+    if(params.showImage){
         ctx.save();
+        //ctx.scale(.10,.1);
         ctx.globalAlpha = 1;
-        let color = `rgb(${currentSceneTheme.rainColor.x}, ${currentSceneTheme.rainColor.y}, ${currentSceneTheme.rainColor.z})`; 
-        drawRain(color);
+        ctx.drawImage(image, 0, 0, image.width,    image.height,     // source rectangle
+                   0, 0, canvasWidth, canvasHeight); // destination rectangle
         ctx.restore();
     }
-
 
 
    // Create an end point of a lightnight segment 
@@ -350,20 +325,28 @@ const draw = (params={},fps) => {
   class Raindrop {
     constructor(x, y, radius, accY){
       this.location = utils.createVector(x, y); 
-      this.radius = radius;
       this.velocity = utils.createVector(0, 0);
-      this.acceleration = utils.createVector(0, accY);
-      this.mass = 1;
-  
       this.wind = environment.wind;
-      this.acceleration = utils.vectorAddition(this.acceleration, this.wind);
+      this.acceleration = 0;
+      this.setAccel(accY);
+      this.setRadius(radius);
+    }
+
+    setAccel(accY) {
+        this.acceleration = utils.createVector(0, accY);
+        this.acceleration = utils.vectorAddition(this.acceleration, this.wind);
+        //this.velocity = utils.createVector(0, 0);
+    }
+
+    setRadius(radius){
+        this.radius = radius;
     }
   
     draw(color) {
       const { x, y } = this.location;
-      const lineWidth=1;
+      const lineWidth=.1;
       //const color = `rgb(${currentSceneTheme.rainColor})`
-      console.log (color);
+      //console.log (color);
       return utils.drawArc(ctx,x, y, this.radius, color,lineWidth,color, true);
     }
   
@@ -380,29 +363,50 @@ const draw = (params={},fps) => {
   
  
   
-    const addRain = (rainToAdd = raindropCount) => { 
+    const addRain = (rainToAdd = environment.rainType.count - rainDrops.length, radius = 1.0 , accY = environment.rainType.speed) => { 
         for (let i = 0 ; i < rainToAdd ; i++) {
-            let x = utils.getRandom(0, canvasWidth);
-            let y = utils.getRandom(-350 , 0);
+            let x = utils.getRandom(0, canvasWidth+100);
+            let y = utils.getRandom(-700 , -200);
             // let accY = getRandomFloat(1, 5) * 0.05;
-            let accY = environment.rainType.speed;
-            rainDrops.push(new Raindrop(x, y, 1.0, accY));
+            rainDrops.push(new Raindrop(x, y, radius, accY));
         }
     }
   
   
-  // continuous animation loop
-  const drawRain = function(color) {
+  // continuous rain animation loop
+  const drawRain = function(color, rainContinue, radius = 1.0, accY = environment.rainType.speed) {
 
     for (let i = 0; i < rainDrops.length; i++) {
-         
-      rainDrops[i].fall();
-      rainDrops[i].draw(color);
-      if(rainDrops[i].location.y > canvasHeight || rainDrops[i].location.x > canvasWidth)
-      {
-        rainDrops.splice(i,1);
-        i--;
-      }
+        // Set radius and acceleration
+        rainDrops[i].setRadius(radius);
+        rainDrops[i].setAccel(accY);
+        rainDrops[i].fall();
+        rainDrops[i].draw(color);
+    
+        // Despawn or removes rain out of bounds
+        if(rainDrops[i].location.y > canvasHeight || rainDrops[i].location.x < 0)
+        {
+            
+          // Remove rain if there's too much or it needs to stop
+          if(rainContinue && (rainDrops.length <= environment.rainType.count))
+          {
+              let x = utils.getRandom(0, canvasWidth+50);
+              let y = utils.getRandom(-50, 0);
+              rainDrops[i].location = utils.createVector(x, y);
+              
+          }
+          else
+           {
+              rainDrops.splice(i,1);
+              i--;
+           }
+           
+          
+        }
+        
+      
+      // Respawn or remove a rain drop
+      
     }
   
   }
@@ -414,10 +418,18 @@ Public Variables
 */
 ///
 
+// Set the rain enviroment type
+const setRainType = (type) => {
+    environment["rainType"] = rainType[type];
+
+}
+
+// Set the theme of the scene theme type
 const setTheme = (theme) => {
     currentSceneTheme =  rainThemes[theme];
 }
 
+// Set the relative number of lightning strikes
 const setStrike = (value) => {
     value = Number(value); // make sure that it's a Number rather than a String
     lightningStrikeLines = [];
@@ -431,4 +443,4 @@ const setRandom = (value) => {
     lightningRandomness = utils.lerp((Math.PI/2), 0, value);
 };
 
-export {setupCanvas,draw,setRandom, setStrike, setTheme};
+export {setupCanvas,draw,setRandom, setStrike, setTheme, setRainType};

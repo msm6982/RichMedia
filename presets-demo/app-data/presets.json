@@ -1,0 +1,20 @@
+{
+	"page-title" : "TUBAR - <u>T</u>ext'd <u>U</u>p <u>B</u>eyond <u>A</u>ll <u>R</u>ecognition",
+	"presets" : [
+		{
+			"title" : "Traditional",
+			"description" : "Good for working with large amounts of text - this is a traditional choice for coders and old people.",
+			"text-colors" : ["Black","Grey","Darkgray", "Dimgray"],
+			"text-fonts" : ["Andale Mono", "Courier", "Lucida Console", "Monaco"]
+		},
+		{
+			"title" : "Carefree",
+			"description" : "Highly personalized - this is a good choice for free-thinkers and those who prefer to squint a lot when reading their text.",
+			"text-colors" : ["Purple","Coral","Lime", "Yellow"],
+			"text-fonts" : ["Comic Sans MS", "Impact", "Didot", "Bradley Hand", "Brush Script", "Luminari"]
+		}
+
+	
+	]
+
+}

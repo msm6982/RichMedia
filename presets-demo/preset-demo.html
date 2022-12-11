@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<title>TUBAR - "Presets" Demo</title>
+	<style>
+		body{
+			font-family: sans-serif;
+		}
+		#text-description{
+			font-style: italic;
+		}
+		label{
+			font-weight: bold;
+		}
+		select{
+			margin-left: .3rem;
+			margin-right: 1rem;
+		}
+		
+		#text-main{
+			font-size: 1.2rem;
+		}
+
+	</style>
+
+</head>
+<body>
+	<h1 id="text-title">???</h1>
+
+	<label>Choose Preset
+		<select id="select-presets">
+			<option>???</option>
+		</select>
+	</label>
+
+	<p id="text-description">???</p>
+
+	<hr>
+
+	<label>Text Color
+		<select id="select-text-color">
+			<option>???</option>
+		</select>
+	</label>
+
+	<label>Text Font
+		<select id="select-text-font">
+			<option>???</option>
+		</select>
+	</label>
+
+	<hr>
+
+	<section id="text-main" contenteditable>
+		Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere consequuntur quia tempora architecto temporibus a nisi, sunt molestiae quas. Exercitationem, aliquid. Harum ex nisi, aperiam nesciunt repellat inventore illo perspiciatis nobis iste, perferendis voluptatum eligendi totam animi dolore praesentium dolorum rem placeat deleniti amet soluta! Ad libero necessitatibus unde voluptatem, odit molestias amet corrupti maxime, deleniti voluptate eligendi blanditiis sit doloremque ipsa quos. Beatae error aliquam esse doloribus molestias ratione voluptates cum illo laborum itaque soluta modi et nemo earum magnam temporibus, iusto, ipsam, autem necessitatibus quidem dolor deleniti repellendus. Omnis qui corporis voluptas vero sint necessitatibus nulla, perferendis quo.
+	</section>
+	
+
+<script>
+	// I. UTILS
+	const loadJsonFetch = (url,callback) => {
+		fetch(url)
+			.then(response => {
+				// If the response is successful, return the JSON
+				if (response.ok) {
+					return response.json();
+				}
+
+				// else throw an error that will be caught below
+				return response.text().then(text =>{
+					throw text;
+				});
+			}) // send the response.json() promise to the next .then()
+			.then(json => { // the second promise is resolved, and `json` is a JSON object
+				callback(json);
+			}).catch(error => {
+				// error
+				console.log(error);
+		});
+	};
+
+	// II. MAIN
+	let presets = [];
+
+	const changeColor = colorName => {
+		console.log(colorName);
+		document.querySelector("#text-main").style.color = colorName;
+	
+	};
+
+	const changeFont = fontName => {
+		console.log(fontName);
+		document.querySelector("#text-main").style.fontFamily = fontName;
+	
+	};
+
+	const loadPreset = index => {
+		const currentPreset = presets[index];
+		// Populate description
+		document.querySelector("#text-description").innerHTML = currentPreset.description;
+	
+		// Populate selects
+		// here we created the <option> elements using 1-liners and string concatenation
+		const selectTextColor = document.querySelector("#select-text-color");
+		selectTextColor.innerHTML = currentPreset["text-colors"].map(color => `<option value="${color}">${color}</option>`).join("");
+		const selectTextFont = document.querySelector("#select-text-font");
+		selectTextFont.innerHTML = currentPreset["text-fonts"].map(color => `<option value="${color}">${color}</option>`).join("");
+		
+		// Hook up event handlers
+		selectTextColor.onchange = e => changeColor(e.target.value);
+		selectTextFont.onchange = e => changeFont(e.target.value);
+
+		// Set initial values
+		changeColor(selectTextColor.value);
+		changeFont(selectTextFont.value);
+	};
+
+	const initUI = () => {
+		// Populate <select>
+		const selectPresets = document.querySelector("#select-presets");
+		selectPresets.innerHTML = "";
+		// here we created the <option> elements with `document.createElement()`
+		presets.forEach((preset,index) => {
+			const option = document.createElement("option");
+			option.text = preset["title"];
+			option.value = index;
+			selectPresets.appendChild(option);
+		});
+
+		// Hook up event handler
+		selectPresets.onchange = e => loadPreset(e.target.value);
+
+		// Set initial value
+		loadPreset(selectPresets.value); 
+	};
+
+	const dataLoaded = json => {
+		console.log(json);
+		document.querySelector("#text-title").innerHTML = json["page-title"] || "No 'page-title' found";
+		presets = json.presets || ["No 'presets' found"];
+		initUI();
+	};
+
+	// None of this JS will be called until HTML page is done loading
+	loadJsonFetch("app-data/presets.json",dataLoaded);
+
+</script>
+</body>
+</html>

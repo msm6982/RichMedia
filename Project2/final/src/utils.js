@@ -35,6 +35,8 @@ const makeColor = (red, green, blue, alpha = 1) => {
     return lg;
   };
 
+  // returns a percentage of a difference in range
+  const diffInRange = (value, minRange, maxRange) => { return ((value - minRange)) / (maxRange - minRange); }
 
   function drawArc(ctx, startX, startY, radius, fillStyle = "white", lineWidth = 1, strokeStyle ="white", fill = true){
     
@@ -48,13 +50,15 @@ const makeColor = (red, green, blue, alpha = 1) => {
 
     
     // Fill rect
-    if (fill) ctx.stroke();
+    if (fill) ctx.fill();
     // Add Line width
+  
     if(lineWidth > 0){
         ctx.lineWidth = lineWidth
         ctx.strokeStyle = strokeStyle;
         ctx.stroke();
     }
+    
     ctx.closePath();
     ctx.restore();
 
@@ -79,4 +83,4 @@ const makeColor = (red, green, blue, alpha = 1) => {
       // .. and do nothing if the method is not supported
   };
   
-  export {createVector, vectorAddition,drawArc,getRandom,makeColor, getRandomColor, getLinearGradient, goFullscreen, lerp, createVector3};
+  export {createVector, vectorAddition,drawArc,getRandom,makeColor, getRandomColor, getLinearGradient, goFullscreen, lerp, createVector3, diffInRange};

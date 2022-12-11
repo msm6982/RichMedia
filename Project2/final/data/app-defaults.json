@@ -1,0 +1,57 @@
+{
+    "av-defaults" : {
+            "title" : "default-options",
+            "checkBoxParams" : {
+                "showBackground" : true,
+                "showLightning" : true,
+                "showRain"     : true,
+                "showFlash"    : true,
+                "rainPulse"    : true,
+                "constLight"   : false,
+                "showImage"    : false
+            },
+            "sliderDefaults" : {
+                "volume" : 0.1,
+                "lightningRandomness" : 1,
+                "lighningAmm" : 10
+            },
+            "dropdownSelect" : {
+                "track" : "media/Crypteque (1-2).mp3",
+                "rain" : "light",
+                "theme" : "natural"
+            }
+    },
+    
+
+    "av-controls" : {
+        "rainDropDown" : [
+            { "title": "Drizzle", "value": "drizzle" },
+            { "title": "Light-Rain", "value": "light" },
+            { "title": "Medium-Rain", "value": "medium" },
+            { "title": "Downpour", "value": "downpour" },
+            { "title": "After-Shower", "value": "aftershower" }
+        ],
+        "sceneTheme" : [
+            { "title": "Natural", "value": "natural" },
+            { "title": "Evil", "value": "evil" },
+            { "title": "Cartoon", "value": "cartoon" }
+        ],
+        "tracks" : [
+            { "title":"Crypteque", "value": "media/Crypteque (1-2).mp3" },
+            { "title":"Grave Throbbing", "value": "media/Grave Throbbing (2-2).mp3" },
+            { "title":"Rhythmortis", "value": "media/Rhythmortis.mp3" }
+        ],
+        "checkBoxes" : [
+            {"id" : "backgroundCB", "title": "Show Background"},
+            {"id" : "lightningCB", "title": "Show Lightning"},
+            {"id" : "rainCB", "title": "Show Rain"},
+            {"id" : "flashCB", "title": "Show Flash"},
+            {"id" : "pulseRainCB", "title": "Pulse Rain"},
+            {"id" : "constantLightningCB", "title": "Constant Lightning!"},
+            {"id" : "windowCB", "title": "Show Window"}
+        ]
+        
+    }
+    
+
+}
